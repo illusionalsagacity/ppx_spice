@@ -21,3 +21,9 @@ type t2 = {
   a: int,
   bs?: array<b>,
 }
+
+@spice
+type t3 = {
+  a: string,
+  bs?: array<Null.t<int>>,
+}

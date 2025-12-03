@@ -55,13 +55,13 @@ let generate_encoder_case generator_settings unboxed has_attr_as row =
       in
 
       let rhs_list =
-        args
-        |> List.map (Codecs.generate_codecs generator_settings)
-        |> List.map (fun (encoder, _) -> Option.get encoder)
-        |> List.mapi (fun i e ->
-               Exp.apply ~attrs:[ Utils.attr_uapp ] ~loc e
+        json_expr
+        :: List.mapi
+             (fun i arg ->
+               let encoder, _ = Codecs.generate_codecs generator_settings arg in
+               Exp.apply ~attrs:[ Utils.attr_uapp ] ~loc (Option.get encoder)
                  [ (Asttypes.Nolabel, make_ident_expr ("v" ^ string_of_int i)) ])
-        |> List.append [ json_expr ]
+             args
       in
 
       {

@@ -16,7 +16,10 @@ let lid ?(loc = Location.none) s = mkloc (Longident.parse s) loc
 let make_ident_expr ?attrs s = Exp.ident ?attrs (mknoloc (longident_parse s))
 
 let tuple_or_singleton tuple l =
-  match List.length l > 1 with true -> tuple l | false -> List.hd l
+  match l with
+  | [] -> failwith "tuple_or_singleton: empty list"
+  | [ x ] -> x
+  | _ -> tuple l
 
 let get_attribute_by_name attributes name =
   let filtered =
@@ -31,23 +34,21 @@ let get_attribute_by_name attributes name =
 type generator_settings = { do_encode : bool; do_decode : bool }
 
 let get_generator_settings_from_attributes attributes =
-  match get_attribute_by_name attributes annotation_name with
-  | Ok None -> (
-      match
-        ( get_attribute_by_name attributes (annotation_name ^ ".decode"),
-          get_attribute_by_name attributes (annotation_name ^ ".encode") )
-      with
-      | Ok (Some _), Ok (Some _) ->
-          Ok (Some { do_encode = true; do_decode = true })
-      | Ok (Some _), Ok None ->
-          Ok (Some { do_encode = false; do_decode = true })
-      | Ok None, Ok (Some _) ->
-          Ok (Some { do_encode = true; do_decode = false })
-      | Ok None, Ok None -> Ok None
-      | (Error _ as e), _ -> e
-      | _, (Error _ as e) -> e)
-  | Ok (Some _) -> Ok (Some { do_encode = true; do_decode = true })
-  | Error _ as e -> e
+  let spice, decode, encode =
+    List.fold_left
+      (fun (spice, decode, encode) { attr_name = { Location.txt } } ->
+        if txt = annotation_name then (true, decode, encode)
+        else if txt = annotation_name ^ ".decode" then (spice, true, encode)
+        else if txt = annotation_name ^ ".encode" then (spice, decode, true)
+        else (spice, decode, encode))
+      (false, false, false) attributes
+  in
+  match (spice, decode, encode) with
+  | true, _, _ -> Ok (Some { do_encode = true; do_decode = true })
+  | false, true, true -> Ok (Some { do_encode = true; do_decode = true })
+  | false, true, false -> Ok (Some { do_encode = false; do_decode = true })
+  | false, false, true -> Ok (Some { do_encode = true; do_decode = false })
+  | false, false, false -> Ok None
 
 let get_expression_from_payload { attr_name = { loc }; attr_payload = payload }
     =

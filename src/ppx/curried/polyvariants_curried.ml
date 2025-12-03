@@ -55,13 +55,13 @@ let generate_encoder_case generator_settings unboxed has_attr_as row =
       in
 
       let rhs_list =
-        args
-        |> List.map (Codecs.generate_codecs generator_settings)
-        |> List.map (fun (encoder, _) -> Option.get encoder)
-        |> List.mapi (fun i e ->
-               Exp.apply ~loc e
+        json_expr
+        :: List.mapi
+             (fun i arg ->
+               let encoder, _ = Codecs.generate_codecs generator_settings arg in
+               Exp.apply ~loc (Option.get encoder)
                  [ (Asttypes.Nolabel, make_ident_expr ("v" ^ string_of_int i)) ])
-        |> List.append [ json_expr ]
+             args
       in
 
       {
@@ -223,10 +223,14 @@ let parse_decl ({ prf_desc; prf_loc; prf_attributes } as row_field) =
 
 let generate_codecs ({ do_encode; do_decode } as generator_settings) row_fields
     unboxed =
-  let parsed_fields = List.map parse_decl row_fields in
-  let count_has_attr =
-    parsed_fields |> List.filter (fun v -> v.has_attr_as) |> List.length
+  let parsed_fields, count_has_attr =
+    List.fold_left
+      (fun (acc, count) decl ->
+        let parsed = parse_decl decl in
+        (parsed :: acc, if parsed.has_attr_as then count + 1 else count))
+      ([], 0) row_fields
   in
+  let parsed_fields = List.rev parsed_fields in
   let has_attr_as =
     if count_has_attr > 0 then
       if count_has_attr = List.length parsed_fields then true

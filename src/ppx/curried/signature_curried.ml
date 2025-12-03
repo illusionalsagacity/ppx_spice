@@ -30,34 +30,27 @@ let generate_sig_decls { do_encode; do_decode } type_name param_names =
     |> Ast_helper.Typ.constr (lid type_name)
   in
 
-  let decls = [] in
-
-  let decls =
-    match do_encode with
-    | true ->
-        decls
-        @ [
-            [%type: [%t value_type] -> Js.Json.t]
-            |> add_encoder_params (List.rev param_names)
-            |> Ast_helper.Val.mk (mknoloc encoder_pat)
-            |> Ast_helper.Sig.value;
-          ]
-    | false -> decls
+  let encoder_decl =
+    if do_encode then
+      [
+        [%type: [%t value_type] -> Js.Json.t]
+        |> add_encoder_params (List.rev param_names)
+        |> Ast_helper.Val.mk (mknoloc encoder_pat)
+        |> Ast_helper.Sig.value;
+      ]
+    else []
   in
-  let decls =
-    match do_decode with
-    | true ->
-        decls
-        @ [
-            [%type: Js.Json.t -> [%t make_result_type value_type]]
-            |> add_decoder_params (List.rev param_names)
-            |> Ast_helper.Val.mk (mknoloc decoder_pat)
-            |> Ast_helper.Sig.value;
-          ]
-    | false -> decls
+  let decoder_decl =
+    if do_decode then
+      [
+        [%type: Js.Json.t -> [%t make_result_type value_type]]
+        |> add_decoder_params (List.rev param_names)
+        |> Ast_helper.Val.mk (mknoloc decoder_pat)
+        |> Ast_helper.Sig.value;
+      ]
+    else []
   in
-
-  decls
+  encoder_decl @ decoder_decl
 
 let map_type_decl decl =
   let {
@@ -79,8 +72,6 @@ let map_type_decl decl =
 let map_signature_item _mapper ({ psig_desc } as signature_item) =
   match psig_desc with
   | Psig_type (_, decls) ->
-      let generated_sig_items =
-        decls |> List.map map_type_decl |> List.concat
-      in
+      let generated_sig_items = List.concat_map map_type_decl decls in
       signature_item :: generated_sig_items
   | _ -> [ signature_item ]

@@ -79,21 +79,21 @@ let generate_arg_decoder generator_settings args constructor_name =
   in
 
   (* Build nested matches from the last arg backwards *)
-  let rec build_nested_matches remaining inner_expr =
-    match remaining with
-    | [] -> inner_expr
-    | (i, codec) :: rest ->
-        let decode_expr = generate_decode_expr i codec in
-        let var_pat = Pat.var (mknoloc ("v" ^ string_of_int i)) in
-        let ok_case =
-          Exp.case [%pat? Ok [%p var_pat]]
-            (build_nested_matches rest inner_expr)
-        in
-        let error_case =
-          Exp.case [%pat? Error (e : Spice.decodeError)]
-            [%expr Error { e with path = [%e index_const i] ^ e.path }]
-        in
-        Exp.match_ decode_expr [ ok_case; error_case ]
+  let build_nested_matches indexed_codecs inner_expr =
+    let rec loop acc = function
+      | [] -> acc
+      | (i, codec) :: rest ->
+          let decode_expr = generate_decode_expr i codec in
+          let var_pat = Pat.var (mknoloc ("v" ^ string_of_int i)) in
+          let ok_case = Exp.case [%pat? Ok [%p var_pat]] acc in
+          let error_case =
+            Exp.case [%pat? Error (e : Spice.decodeError)]
+              [%expr Error { e with path = [%e index_const i] ^ e.path }]
+          in
+          let match_expr = Exp.match_ decode_expr [ ok_case; error_case ] in
+          loop match_expr rest
+    in
+    loop inner_expr (List.rev indexed_codecs)
   in
 
   (* Create indexed list of codecs *)
@@ -195,10 +195,14 @@ let parse_decl _generator_settings
 
 let generate_codecs ({ do_encode; do_decode } as generator_settings)
     constr_decls unboxed =
-  let parsed_decls = List.map (parse_decl generator_settings) constr_decls in
-  let count_has_attr =
-    parsed_decls |> List.filter (fun v -> v.has_attr_as) |> List.length
+  let parsed_decls, count_has_attr =
+    List.fold_left
+      (fun (acc, count) decl ->
+        let parsed = parse_decl generator_settings decl in
+        (parsed :: acc, if parsed.has_attr_as then count + 1 else count))
+      ([], 0) constr_decls
   in
+  let parsed_decls = List.rev parsed_decls in
   let has_attr_as =
     if count_has_attr > 0 then
       if count_has_attr = List.length parsed_decls then true

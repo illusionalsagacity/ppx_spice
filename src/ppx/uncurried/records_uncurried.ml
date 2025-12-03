@@ -78,23 +78,18 @@ let generate_success_case { name } success_expr =
     pc_rhs = success_expr;
   }
 
-let rec generate_nested_switches_recurse all_decls remaining_decls =
-  let current, success_expr =
-    match remaining_decls with
-    | [] -> failwith "Spice internal error: [] not expected"
-    | [ last ] -> (last, generate_final_record_expr all_decls)
-    | first :: tail -> (first, generate_nested_switches_recurse all_decls tail)
-  in
-  [ generate_error_case current ]
-  |> List.append [ generate_success_case current success_expr ]
-  |> Exp.match_ (generate_dict_get current)
-  [@@ocaml.doc
-    " Recursively generates an expression containing nested switches, first\n\
-    \ *  decoding the first record items, then (if successful) the second, \
-     etc. "]
-
 let generate_nested_switches decls =
-  generate_nested_switches_recurse decls decls
+  let rec loop current_expr = function
+    | [] -> current_expr
+    | decl :: rest ->
+        let success_case = generate_success_case decl current_expr in
+        let error_case = generate_error_case decl in
+        let match_expr =
+          Exp.match_ (generate_dict_get decl) [ success_case; error_case ]
+        in
+        loop match_expr rest
+  in
+  loop (generate_final_record_expr decls) (List.rev decls)
 
 let generate_decoder decls unboxed =
   match unboxed with
@@ -117,24 +112,24 @@ let generate_decoder decls unboxed =
             | _ -> Spice.error "Not an object" v [@res.uapp]]
 
 let parse_decl generator_settings
-    { pld_name = { txt }; pld_loc; pld_type; pld_attributes } =
-  let default =
-    match get_attribute_by_name pld_attributes "spice.default" with
-    | Ok (Some attribute) -> Some (get_expression_from_payload attribute)
-    | Ok None -> None
-    | Error s -> fail pld_loc s
+    { pld_name = { txt }; pld_loc = _; pld_type; pld_attributes } =
+  let default, key, is_optional =
+    List.fold_left
+      (fun (default, key, is_optional) ({ attr_name = { txt = name } } as attr)
+      ->
+        match name with
+        | "spice.default" ->
+            (Some (get_expression_from_payload attr), key, is_optional)
+        | "spice.key" ->
+            (default, Some (get_expression_from_payload attr), is_optional)
+        | "ns.optional" | "res.optional" -> (default, key, true)
+        | _ -> (default, key, is_optional))
+      (None, None, false) pld_attributes
   in
   let key =
-    match get_attribute_by_name pld_attributes "spice.key" with
-    | Ok (Some attribute) -> get_expression_from_payload attribute
-    | Ok None -> Exp.constant (Pconst_string (txt, Location.none, None))
-    | Error s -> fail pld_loc s
-  in
-  let optional_attrs = [ "ns.optional"; "res.optional" ] in
-  let is_optional =
-    optional_attrs
-    |> List.map (fun attr -> get_attribute_by_name pld_attributes attr)
-    |> List.exists (function Ok (Some _) -> true | _ -> false)
+    match key with
+    | Some k -> k
+    | None -> Exp.constant (Pconst_string (txt, Location.none, None))
   in
   let codecs = Codecs.generate_codecs generator_settings pld_type in
   let add_attrs attrs e = { e with pexp_attributes = attrs } in

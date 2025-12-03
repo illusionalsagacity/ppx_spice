@@ -42,21 +42,21 @@ let generate_decode_switch composite_decoders =
   in
 
   (* Build nested matches from the last element backwards *)
-  let rec build_nested_matches remaining inner_expr =
-    match remaining with
-    | [] -> inner_expr
-    | (i, decoder) :: rest ->
-        let decode_expr = generate_decode_expr i decoder in
-        let var_pat = Pat.var (mknoloc ("v" ^ string_of_int i)) in
-        let ok_case =
-          Exp.case [%pat? Ok [%p var_pat]]
-            (build_nested_matches rest inner_expr)
-        in
-        let error_case =
-          Exp.case [%pat? Error (e : Spice.decodeError)]
-            [%expr Error { e with path = [%e index_const i] ^ e.path }]
-        in
-        Exp.match_ decode_expr [ ok_case; error_case ]
+  let build_nested_matches indexed_decoders inner_expr =
+    let rec loop acc = function
+      | [] -> acc
+      | (i, decoder) :: rest ->
+          let decode_expr = generate_decode_expr i decoder in
+          let var_pat = Pat.var (mknoloc ("v" ^ string_of_int i)) in
+          let ok_case = Exp.case [%pat? Ok [%p var_pat]] acc in
+          let error_case =
+            Exp.case [%pat? Error (e : Spice.decodeError)]
+              [%expr Error { e with path = [%e index_const i] ^ e.path }]
+          in
+          let match_expr = Exp.match_ decode_expr [ ok_case; error_case ] in
+          loop match_expr rest
+    in
+    loop inner_expr (List.rev indexed_decoders)
   in
 
   (* Create indexed list of decoders *)

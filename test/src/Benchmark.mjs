@@ -7,7 +7,7 @@ import * as Js_array from "rescript/lib/es6/js_array.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Belt_Option from "rescript/lib/es6/belt_Option.js";
 
-function user_encode(v) {
+function t_encode(v) {
   return Js_dict.fromArray(Spice.filterOptional([
                   [
                     "id",
@@ -32,7 +32,7 @@ function user_encode(v) {
                 ]));
 }
 
-function user_decode(v) {
+function t_decode(v) {
   if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
     return Spice.error(undefined, "Not an object", v);
   }
@@ -97,6 +97,11 @@ function user_decode(v) {
           }
         };
 }
+
+var User = {
+  t_encode: t_encode,
+  t_decode: t_decode
+};
 
 function timestamp_encode(v) {
   return Js_dict.fromArray(Spice.filterOptional([
@@ -357,7 +362,7 @@ function order_encode(v) {
                   [
                     "customer",
                     false,
-                    user_encode(v.customer)
+                    t_encode(v.customer)
                   ],
                   [
                     "total",
@@ -381,7 +386,7 @@ function order_decode(v) {
   }
   var id = Spice.intFromJson(Belt_Option.getWithDefault(Js_dict.get(v, "id"), null));
   if (id.TAG === "Ok") {
-    var customer = user_decode(Belt_Option.getWithDefault(Js_dict.get(v, "customer"), null));
+    var customer = t_decode(Belt_Option.getWithDefault(Js_dict.get(v, "customer"), null));
     if (customer.TAG === "Ok") {
       var total = Spice.floatFromJson(Belt_Option.getWithDefault(Js_dict.get(v, "total"), null));
       if (total.TAG === "Ok") {
@@ -4337,8 +4342,7 @@ function jsonBlob_decode(v) {
 }
 
 export {
-  user_encode ,
-  user_decode ,
+  User ,
   timestamp_encode ,
   timestamp_decode ,
   metadata_encode ,

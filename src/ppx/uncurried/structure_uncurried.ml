@@ -79,11 +79,11 @@ let map_type_decl decl =
       | _ -> fail ptype_loc "This type is not handled by spice")
   | Error s -> fail ptype_loc s
 
-let map_structure_item _mapper ({ pstr_desc } as structure_item) =
+let map_structure_item mapper ({ pstr_desc } as structure_item) =
   match pstr_desc with
   | Pstr_type (rec_flag, decls) -> (
       let value_bindings = List.concat_map map_type_decl decls in
       match value_bindings with
       | [] -> [ structure_item ]
       | _ -> [ structure_item; Str.value rec_flag value_bindings ])
-  | _ -> [ structure_item ]
+  | _ -> [ mapper#structure_item structure_item ]

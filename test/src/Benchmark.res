@@ -5,12 +5,14 @@
 // Simple Records (4-5 fields)
 // ============================================================================
 
-@spice
-type user = {
-  id: int,
-  name: string,
-  email: string,
-  active: bool,
+module User = {
+  @spice
+  type t = {
+    id: int,
+    name: string,
+    email: string,
+    active: bool,
+  }
 }
 
 @spice
@@ -46,7 +48,7 @@ type profile = {
 @spice
 type order = {
   id: int,
-  customer: user,
+  customer: User.t,
   total: float,
   metadata: metadata,
 }

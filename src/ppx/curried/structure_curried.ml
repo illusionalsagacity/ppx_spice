@@ -85,13 +85,13 @@ let map_type_decl decl =
       | _ -> fail ptype_loc "This type is not handled by spice")
   | Error s -> fail ptype_loc s
 
-let map_structure_item mapper ({ pstr_desc } as structure_item) =
+let map_structure_item _mapper ({ pstr_desc } as structure_item) =
   match pstr_desc with
   | Pstr_type (rec_flag, decls) -> (
       let value_bindings = decls |> List.map map_type_decl |> List.concat in
-      [ mapper#structure_item structure_item ]
+      [ structure_item ]
       @
       match List.length value_bindings > 0 with
       | true -> [ Str.value rec_flag value_bindings ]
       | false -> [])
-  | _ -> [ mapper#structure_item structure_item ]
+  | _ -> [ structure_item ]

@@ -76,11 +76,11 @@ let map_type_decl decl =
       generate_sig_decls generator_settings type_name
         (get_param_names ptype_params)
 
-let map_signature_item mapper ({ psig_desc } as signature_item) =
+let map_signature_item _mapper ({ psig_desc } as signature_item) =
   match psig_desc with
   | Psig_type (_, decls) ->
       let generated_sig_items =
         decls |> List.map map_type_decl |> List.concat
       in
-      mapper#signature_item signature_item :: generated_sig_items
-  | _ -> [ mapper#signature_item signature_item ]
+      signature_item :: generated_sig_items
+  | _ -> [ signature_item ]

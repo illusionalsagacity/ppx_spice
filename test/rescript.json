@@ -24,7 +24,7 @@
   ],
   "ppx-flags": [
     [
-      "../ppx",
+      "@greenlabs/ppx-spice/ppx",
       "-uncurried"
     ]
   ],
@@ -33,7 +33,5 @@
     "number": "-48"
   },
   "generators": [],
-  "bsc-flags": [
-    "-bs-super-errors"
-  ]
+  "bsc-flags": []
 }

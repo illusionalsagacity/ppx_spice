@@ -22,35 +22,46 @@ let generate_encoder composite_encoders =
   Utils.expr_func ~arity:1
     [%expr fun [%p deconstructor_pattern] -> [%e return_exp]]
 
-let generate_decode_success_case num_args =
-  {
-    pc_lhs =
-      Array.init num_args (fun i ->
-          mknoloc ("v" ^ string_of_int i) |> Pat.var |> fun p ->
-          [%pat? Ok [%p p]])
-      |> Array.to_list
-      |> tuple_or_singleton Pat.tuple;
-    pc_guard = None;
-    pc_rhs =
-      ( Array.init num_args (fun i -> make_ident_expr ("v" ^ string_of_int i))
-      |> Array.to_list |> Exp.tuple
-      |> fun e -> [%expr Ok [%e e]] );
-  }
-
+(* O(n) nested matching for tuple decoding - replaces O(n²) pattern generation *)
 let generate_decode_switch composite_decoders =
-  let decode_expr =
-    composite_decoders
-    |> List.mapi (fun i d ->
-           let ident = make_ident_expr ("v" ^ string_of_int i) in
-           [%expr [%e d] [%e ident] [@res.uapp]])
-    |> Exp.tuple
+  let num_args = List.length composite_decoders in
+
+  (* Build the final Ok expression with the constructed tuple *)
+  let ok_expr =
+    let tuple_elements =
+      Array.init num_args (fun i -> make_ident_expr ("v" ^ string_of_int i))
+      |> Array.to_list
+    in
+    [%expr Ok [%e Exp.tuple tuple_elements]]
   in
-  composite_decoders
-  |> List.mapi
-       (Decode_cases.generate_error_case (List.length composite_decoders))
-  |> List.append
-       [ generate_decode_success_case (List.length composite_decoders) ]
-  |> Exp.match_ decode_expr
+
+  (* Generate decode expression for each element *)
+  let generate_decode_expr i decoder =
+    let ident = make_ident_expr ("v" ^ string_of_int i) in
+    [%expr [%e decoder] [%e ident] [@res.uapp]]
+  in
+
+  (* Build nested matches from the last element backwards *)
+  let rec build_nested_matches remaining inner_expr =
+    match remaining with
+    | [] -> inner_expr
+    | (i, decoder) :: rest ->
+        let decode_expr = generate_decode_expr i decoder in
+        let var_pat = Pat.var (mknoloc ("v" ^ string_of_int i)) in
+        let ok_case =
+          Exp.case [%pat? Ok [%p var_pat]]
+            (build_nested_matches rest inner_expr)
+        in
+        let error_case =
+          Exp.case [%pat? Error (e : Spice.decodeError)]
+            [%expr Error { e with path = [%e index_const i] ^ e.path }]
+        in
+        Exp.match_ decode_expr [ ok_case; error_case ]
+  in
+
+  (* Create indexed list of decoders *)
+  let indexed_decoders = List.mapi (fun i d -> (i, d)) composite_decoders in
+  build_nested_matches indexed_decoders ok_expr
 
 let generate_decoder composite_decoders =
   let match_arr_pattern =

@@ -24,7 +24,7 @@ function t_decode(v) {
     };
   }
   let e = a._0;
-  return Spice.error("a", e.message, e.value);
+  return Spice.error("." + ("a" + e.path), e.message, e.value);
 }
 
 let M = {
@@ -73,10 +73,10 @@ function response_decode(v) {
       };
     }
     let e = errors._0;
-    return Spice.error("errors", e.message, e.value);
+    return Spice.error("." + ("errors" + e.path), e.message, e.value);
   }
   let e$1 = data._0;
-  return Spice.error("data", e$1.message, e$1.value);
+  return Spice.error("." + ("data" + e$1.path), e$1.message, e$1.value);
 }
 
 export {

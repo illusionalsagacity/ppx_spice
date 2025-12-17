@@ -98,10 +98,8 @@ let generate_arg_decoder generator_settings args constructor_name =
                        (Typ.constr
                           (mknoloc (Longident.parse "Spice.decodeError"))
                           []))))
-              [%expr
-                Error
-                  (* +1 because index 0 is the constructor *)
-                  { e with path = [%e index_const (i + 1)] ^ e.path }]
+              (* +1 because index 0 is the constructor *)
+              [%expr Spice.error ~path:([%e index_const (i + 1)] ^ e.path) e.message e.value]
           in
           let match_expr = Exp.match_ decode_expr [ ok_case; error_case ] in
           loop match_expr rest

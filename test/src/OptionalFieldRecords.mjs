@@ -37,10 +37,10 @@ function t0_decode(v) {
       };
     }
     let e = b._0;
-    return Spice.error("b", e.message, e.value);
+    return Spice.error("." + ("b" + e.path), e.message, e.value);
   }
   let e$1 = a._0;
-  return Spice.error("a", e$1.message, e$1.value);
+  return Spice.error("." + ("a" + e$1.path), e$1.message, e$1.value);
 }
 
 function t1_encode(v) {
@@ -77,10 +77,10 @@ function t1_decode(v) {
       };
     }
     let e = bs._0;
-    return Spice.error("bs", e.message, e.value);
+    return Spice.error("." + ("bs" + e.path), e.message, e.value);
   }
   let e$1 = a._0;
-  return Spice.error("a", e$1.message, e$1.value);
+  return Spice.error("." + ("a" + e$1.path), e$1.message, e$1.value);
 }
 
 function b_encode(v) {
@@ -156,10 +156,10 @@ function t2_decode(v) {
       };
     }
     let e = bs._0;
-    return Spice.error("bs", e.message, e.value);
+    return Spice.error("." + ("bs" + e.path), e.message, e.value);
   }
   let e$1 = a._0;
-  return Spice.error("a", e$1.message, e$1.value);
+  return Spice.error("." + ("a" + e$1.path), e$1.message, e$1.value);
 }
 
 export {

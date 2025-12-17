@@ -47,16 +47,16 @@ function user_decode(v) {
           };
         }
         let e = active._0;
-        return Spice.error("active", e.message, e.value);
+        return Spice.error("." + ("active" + e.path), e.message, e.value);
       }
       let e$1 = email._0;
-      return Spice.error("email", e$1.message, e$1.value);
+      return Spice.error("." + ("email" + e$1.path), e$1.message, e$1.value);
     }
     let e$2 = name._0;
-    return Spice.error("name", e$2.message, e$2.value);
+    return Spice.error("." + ("name" + e$2.path), e$2.message, e$2.value);
   }
   let e$3 = id._0;
-  return Spice.error("id", e$3.message, e$3.value);
+  return Spice.error("." + ("id" + e$3.path), e$3.message, e$3.value);
 }
 
 function timestamp_encode(v) {
@@ -89,10 +89,10 @@ function timestamp_decode(v) {
       };
     }
     let e = nanos._0;
-    return Spice.error("nanos", e.message, e.value);
+    return Spice.error("." + ("nanos" + e.path), e.message, e.value);
   }
   let e$1 = seconds._0;
-  return Spice.error("seconds", e$1.message, e$1.value);
+  return Spice.error("." + ("seconds" + e$1.path), e$1.message, e$1.value);
 }
 
 function metadata_encode(v) {
@@ -132,13 +132,13 @@ function metadata_decode(v) {
         };
       }
       let e = version._0;
-      return Spice.error("version", e.message, e.value);
+      return Spice.error("." + ("version" + e.path), e.message, e.value);
     }
     let e$1 = updatedAt._0;
-    return Spice.error("updatedAt", e$1.message, e$1.value);
+    return Spice.error("." + ("updatedAt" + e$1.path), e$1.message, e$1.value);
   }
   let e$2 = createdAt._0;
-  return Spice.error("createdAt", e$2.message, e$2.value);
+  return Spice.error("." + ("createdAt" + e$2.path), e$2.message, e$2.value);
 }
 
 function profile_encode(v) {
@@ -204,19 +204,19 @@ function profile_decode(v) {
             };
           }
           let e = website._0;
-          return Spice.error("website", e.message, e.value);
+          return Spice.error("." + ("website" + e.path), e.message, e.value);
         }
         let e$1 = avatarUrl._0;
-        return Spice.error("avatarUrl", e$1.message, e$1.value);
+        return Spice.error("." + ("avatarUrl" + e$1.path), e$1.message, e$1.value);
       }
       let e$2 = bio._0;
-      return Spice.error("bio", e$2.message, e$2.value);
+      return Spice.error("." + ("bio" + e$2.path), e$2.message, e$2.value);
     }
     let e$3 = displayName._0;
-    return Spice.error("displayName", e$3.message, e$3.value);
+    return Spice.error("." + ("displayName" + e$3.path), e$3.message, e$3.value);
   }
   let e$4 = userId._0;
-  return Spice.error("userId", e$4.message, e$4.value);
+  return Spice.error("." + ("userId" + e$4.path), e$4.message, e$4.value);
 }
 
 function order_encode(v) {
@@ -263,16 +263,16 @@ function order_decode(v) {
           };
         }
         let e = metadata._0;
-        return Spice.error("metadata", e.message, e.value);
+        return Spice.error("." + ("metadata" + e.path), e.message, e.value);
       }
       let e$1 = total._0;
-      return Spice.error("total", e$1.message, e$1.value);
+      return Spice.error("." + ("total" + e$1.path), e$1.message, e$1.value);
     }
     let e$2 = customer._0;
-    return Spice.error("customer", e$2.message, e$2.value);
+    return Spice.error("." + ("customer" + e$2.path), e$2.message, e$2.value);
   }
   let e$3 = id._0;
-  return Spice.error("id", e$3.message, e$3.value);
+  return Spice.error("." + ("id" + e$3.path), e$3.message, e$3.value);
 }
 
 function status_encode(v) {
@@ -374,14 +374,7 @@ function notification_decode(v) {
           };
         }
         let e = v0._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e.path,
-            message: e.message,
-            value: e.value
-          }
-        };
+        return Spice.error("[1]" + e.path, e.message, e.value);
       case "Push" :
         if (v.length !== 3) {
           return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
@@ -400,24 +393,10 @@ function notification_decode(v) {
             };
           }
           let e$1 = v1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$1.path,
-              message: e$1.message,
-              value: e$1.value
-            }
-          };
+          return Spice.error("[2]" + e$1.path, e$1.message, e$1.value);
         }
         let e$2 = v0$1._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$2.path,
-            message: e$2.message,
-            value: e$2.value
-          }
-        };
+        return Spice.error("[1]" + e$2.path, e$2.message, e$2.value);
       case "SMS" :
         if (v.length !== 2) {
           return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
@@ -433,14 +412,7 @@ function notification_decode(v) {
           };
         }
         let e$3 = v0$2._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$3.path,
-            message: e$3.message,
-            value: e$3.value
-          }
-        };
+        return Spice.error("[1]" + e$3.path, e$3.message, e$3.value);
     }
   }
   return Spice.error(undefined, "Invalid variant constructor", v[0]);
@@ -506,7 +478,7 @@ function color_decode(v) {
         }
     }
   }
-  return Spice.error(undefined, "Invalid polymorphic variant constructor", v[0]);
+  return Spice.error("[0]", "Invalid polymorphic variant constructor", v[0]);
 }
 
 function logLevel_encode(v) {
@@ -585,10 +557,10 @@ function wrapper_decode(decoder_a) {
         };
       }
       let e = timestamp._0;
-      return Spice.error("timestamp", e.message, e.value);
+      return Spice.error("." + ("timestamp" + e.path), e.message, e.value);
     }
     let e$1 = data._0;
-    return Spice.error("data", e$1.message, e$1.value);
+    return Spice.error("." + ("data" + e$1.path), e$1.message, e$1.value);
   };
 }
 
@@ -639,13 +611,13 @@ function response_decode(decoder_a) {
           };
         }
         let e = error._0;
-        return Spice.error("error", e.message, e.value);
+        return Spice.error("." + ("error" + e.path), e.message, e.value);
       }
       let e$1 = data._0;
-      return Spice.error("data", e$1.message, e$1.value);
+      return Spice.error("." + ("data" + e$1.path), e$1.message, e$1.value);
     }
     let e$2 = success._0;
-    return Spice.error("success", e$2.message, e$2.value);
+    return Spice.error("." + ("success" + e$2.path), e$2.message, e$2.value);
   };
 }
 
@@ -686,13 +658,13 @@ function apiUser_decode(v) {
         };
       }
       let e = lastName._0;
-      return Spice.error("last_name", e.message, e.value);
+      return Spice.error("." + ("last_name" + e.path), e.message, e.value);
     }
     let e$1 = firstName._0;
-    return Spice.error("first_name", e$1.message, e$1.value);
+    return Spice.error("." + ("first_name" + e$1.path), e$1.message, e$1.value);
   }
   let e$2 = userId._0;
-  return Spice.error("user_id", e$2.message, e$2.value);
+  return Spice.error("." + ("user_id" + e$2.path), e$2.message, e$2.value);
 }
 
 function configWithDefaults_encode(v) {
@@ -738,13 +710,13 @@ function configWithDefaults_decode(v) {
         };
       }
       let e = debug._0;
-      return Spice.error("debug", e.message, e.value);
+      return Spice.error("." + ("debug" + e.path), e.message, e.value);
     }
     let e$1 = port._0;
-    return Spice.error("port", e$1.message, e$1.value);
+    return Spice.error("." + ("port" + e$1.path), e$1.message, e$1.value);
   }
   let e$2 = host._0;
-  return Spice.error("host", e$2.message, e$2.value);
+  return Spice.error("." + ("host" + e$2.path), e$2.message, e$2.value);
 }
 
 function mediumRecord_encode(v) {
@@ -841,34 +813,34 @@ function mediumRecord_decode(v) {
                       };
                     }
                     let e = field10._0;
-                    return Spice.error("field10", e.message, e.value);
+                    return Spice.error("." + ("field10" + e.path), e.message, e.value);
                   }
                   let e$1 = field9._0;
-                  return Spice.error("field9", e$1.message, e$1.value);
+                  return Spice.error("." + ("field9" + e$1.path), e$1.message, e$1.value);
                 }
                 let e$2 = field8._0;
-                return Spice.error("field8", e$2.message, e$2.value);
+                return Spice.error("." + ("field8" + e$2.path), e$2.message, e$2.value);
               }
               let e$3 = field7._0;
-              return Spice.error("field7", e$3.message, e$3.value);
+              return Spice.error("." + ("field7" + e$3.path), e$3.message, e$3.value);
             }
             let e$4 = field6._0;
-            return Spice.error("field6", e$4.message, e$4.value);
+            return Spice.error("." + ("field6" + e$4.path), e$4.message, e$4.value);
           }
           let e$5 = field5._0;
-          return Spice.error("field5", e$5.message, e$5.value);
+          return Spice.error("." + ("field5" + e$5.path), e$5.message, e$5.value);
         }
         let e$6 = field4._0;
-        return Spice.error("field4", e$6.message, e$6.value);
+        return Spice.error("." + ("field4" + e$6.path), e$6.message, e$6.value);
       }
       let e$7 = field3._0;
-      return Spice.error("field3", e$7.message, e$7.value);
+      return Spice.error("." + ("field3" + e$7.path), e$7.message, e$7.value);
     }
     let e$8 = field2._0;
-    return Spice.error("field2", e$8.message, e$8.value);
+    return Spice.error("." + ("field2" + e$8.path), e$8.message, e$8.value);
   }
   let e$9 = field1._0;
-  return Spice.error("field1", e$9.message, e$9.value);
+  return Spice.error("." + ("field1" + e$9.path), e$9.message, e$9.value);
 }
 
 function largeRecord_encode(v) {
@@ -1043,64 +1015,64 @@ function largeRecord_decode(v) {
                                           };
                                         }
                                         let e = e4._0;
-                                        return Spice.error("e4", e.message, e.value);
+                                        return Spice.error("." + ("e4" + e.path), e.message, e.value);
                                       }
                                       let e$1 = e3._0;
-                                      return Spice.error("e3", e$1.message, e$1.value);
+                                      return Spice.error("." + ("e3" + e$1.path), e$1.message, e$1.value);
                                     }
                                     let e$2 = e2._0;
-                                    return Spice.error("e2", e$2.message, e$2.value);
+                                    return Spice.error("." + ("e2" + e$2.path), e$2.message, e$2.value);
                                   }
                                   let e$3 = e1._0;
-                                  return Spice.error("e1", e$3.message, e$3.value);
+                                  return Spice.error("." + ("e1" + e$3.path), e$3.message, e$3.value);
                                 }
                                 let e$4 = d4._0;
-                                return Spice.error("d4", e$4.message, e$4.value);
+                                return Spice.error("." + ("d4" + e$4.path), e$4.message, e$4.value);
                               }
                               let e$5 = d3._0;
-                              return Spice.error("d3", e$5.message, e$5.value);
+                              return Spice.error("." + ("d3" + e$5.path), e$5.message, e$5.value);
                             }
                             let e$6 = d2._0;
-                            return Spice.error("d2", e$6.message, e$6.value);
+                            return Spice.error("." + ("d2" + e$6.path), e$6.message, e$6.value);
                           }
                           let e$7 = d1._0;
-                          return Spice.error("d1", e$7.message, e$7.value);
+                          return Spice.error("." + ("d1" + e$7.path), e$7.message, e$7.value);
                         }
                         let e$8 = c4._0;
-                        return Spice.error("c4", e$8.message, e$8.value);
+                        return Spice.error("." + ("c4" + e$8.path), e$8.message, e$8.value);
                       }
                       let e$9 = c3._0;
-                      return Spice.error("c3", e$9.message, e$9.value);
+                      return Spice.error("." + ("c3" + e$9.path), e$9.message, e$9.value);
                     }
                     let e$10 = c2._0;
-                    return Spice.error("c2", e$10.message, e$10.value);
+                    return Spice.error("." + ("c2" + e$10.path), e$10.message, e$10.value);
                   }
                   let e$11 = c1._0;
-                  return Spice.error("c1", e$11.message, e$11.value);
+                  return Spice.error("." + ("c1" + e$11.path), e$11.message, e$11.value);
                 }
                 let e$12 = b4._0;
-                return Spice.error("b4", e$12.message, e$12.value);
+                return Spice.error("." + ("b4" + e$12.path), e$12.message, e$12.value);
               }
               let e$13 = b3._0;
-              return Spice.error("b3", e$13.message, e$13.value);
+              return Spice.error("." + ("b3" + e$13.path), e$13.message, e$13.value);
             }
             let e$14 = b2._0;
-            return Spice.error("b2", e$14.message, e$14.value);
+            return Spice.error("." + ("b2" + e$14.path), e$14.message, e$14.value);
           }
           let e$15 = b1._0;
-          return Spice.error("b1", e$15.message, e$15.value);
+          return Spice.error("." + ("b1" + e$15.path), e$15.message, e$15.value);
         }
         let e$16 = a4._0;
-        return Spice.error("a4", e$16.message, e$16.value);
+        return Spice.error("." + ("a4" + e$16.path), e$16.message, e$16.value);
       }
       let e$17 = a3._0;
-      return Spice.error("a3", e$17.message, e$17.value);
+      return Spice.error("." + ("a3" + e$17.path), e$17.message, e$17.value);
     }
     let e$18 = a2._0;
-    return Spice.error("a2", e$18.message, e$18.value);
+    return Spice.error("." + ("a2" + e$18.path), e$18.message, e$18.value);
   }
   let e$19 = a1._0;
-  return Spice.error("a1", e$19.message, e$19.value);
+  return Spice.error("." + ("a1" + e$19.path), e$19.message, e$19.value);
 }
 
 function veryLargeRecord_encode(v) {
@@ -1509,154 +1481,154 @@ function veryLargeRecord_decode(v) {
                                                                                                       };
                                                                                                     }
                                                                                                     let e = o10._0;
-                                                                                                    return Spice.error("o10", e.message, e.value);
+                                                                                                    return Spice.error("." + ("o10" + e.path), e.message, e.value);
                                                                                                   }
                                                                                                   let e$1 = o9._0;
-                                                                                                  return Spice.error("o9", e$1.message, e$1.value);
+                                                                                                  return Spice.error("." + ("o9" + e$1.path), e$1.message, e$1.value);
                                                                                                 }
                                                                                                 let e$2 = o8._0;
-                                                                                                return Spice.error("o8", e$2.message, e$2.value);
+                                                                                                return Spice.error("." + ("o8" + e$2.path), e$2.message, e$2.value);
                                                                                               }
                                                                                               let e$3 = o7._0;
-                                                                                              return Spice.error("o7", e$3.message, e$3.value);
+                                                                                              return Spice.error("." + ("o7" + e$3.path), e$3.message, e$3.value);
                                                                                             }
                                                                                             let e$4 = o6._0;
-                                                                                            return Spice.error("o6", e$4.message, e$4.value);
+                                                                                            return Spice.error("." + ("o6" + e$4.path), e$4.message, e$4.value);
                                                                                           }
                                                                                           let e$5 = o5._0;
-                                                                                          return Spice.error("o5", e$5.message, e$5.value);
+                                                                                          return Spice.error("." + ("o5" + e$5.path), e$5.message, e$5.value);
                                                                                         }
                                                                                         let e$6 = o4._0;
-                                                                                        return Spice.error("o4", e$6.message, e$6.value);
+                                                                                        return Spice.error("." + ("o4" + e$6.path), e$6.message, e$6.value);
                                                                                       }
                                                                                       let e$7 = o3._0;
-                                                                                      return Spice.error("o3", e$7.message, e$7.value);
+                                                                                      return Spice.error("." + ("o3" + e$7.path), e$7.message, e$7.value);
                                                                                     }
                                                                                     let e$8 = o2._0;
-                                                                                    return Spice.error("o2", e$8.message, e$8.value);
+                                                                                    return Spice.error("." + ("o2" + e$8.path), e$8.message, e$8.value);
                                                                                   }
                                                                                   let e$9 = o1._0;
-                                                                                  return Spice.error("o1", e$9.message, e$9.value);
+                                                                                  return Spice.error("." + ("o1" + e$9.path), e$9.message, e$9.value);
                                                                                 }
                                                                                 let e$10 = b10._0;
-                                                                                return Spice.error("b10", e$10.message, e$10.value);
+                                                                                return Spice.error("." + ("b10" + e$10.path), e$10.message, e$10.value);
                                                                               }
                                                                               let e$11 = b9._0;
-                                                                              return Spice.error("b9", e$11.message, e$11.value);
+                                                                              return Spice.error("." + ("b9" + e$11.path), e$11.message, e$11.value);
                                                                             }
                                                                             let e$12 = b8._0;
-                                                                            return Spice.error("b8", e$12.message, e$12.value);
+                                                                            return Spice.error("." + ("b8" + e$12.path), e$12.message, e$12.value);
                                                                           }
                                                                           let e$13 = b7._0;
-                                                                          return Spice.error("b7", e$13.message, e$13.value);
+                                                                          return Spice.error("." + ("b7" + e$13.path), e$13.message, e$13.value);
                                                                         }
                                                                         let e$14 = b6._0;
-                                                                        return Spice.error("b6", e$14.message, e$14.value);
+                                                                        return Spice.error("." + ("b6" + e$14.path), e$14.message, e$14.value);
                                                                       }
                                                                       let e$15 = b5._0;
-                                                                      return Spice.error("b5", e$15.message, e$15.value);
+                                                                      return Spice.error("." + ("b5" + e$15.path), e$15.message, e$15.value);
                                                                     }
                                                                     let e$16 = b4._0;
-                                                                    return Spice.error("b4", e$16.message, e$16.value);
+                                                                    return Spice.error("." + ("b4" + e$16.path), e$16.message, e$16.value);
                                                                   }
                                                                   let e$17 = b3._0;
-                                                                  return Spice.error("b3", e$17.message, e$17.value);
+                                                                  return Spice.error("." + ("b3" + e$17.path), e$17.message, e$17.value);
                                                                 }
                                                                 let e$18 = b2._0;
-                                                                return Spice.error("b2", e$18.message, e$18.value);
+                                                                return Spice.error("." + ("b2" + e$18.path), e$18.message, e$18.value);
                                                               }
                                                               let e$19 = b1._0;
-                                                              return Spice.error("b1", e$19.message, e$19.value);
+                                                              return Spice.error("." + ("b1" + e$19.path), e$19.message, e$19.value);
                                                             }
                                                             let e$20 = f10._0;
-                                                            return Spice.error("f10", e$20.message, e$20.value);
+                                                            return Spice.error("." + ("f10" + e$20.path), e$20.message, e$20.value);
                                                           }
                                                           let e$21 = f9._0;
-                                                          return Spice.error("f9", e$21.message, e$21.value);
+                                                          return Spice.error("." + ("f9" + e$21.path), e$21.message, e$21.value);
                                                         }
                                                         let e$22 = f8._0;
-                                                        return Spice.error("f8", e$22.message, e$22.value);
+                                                        return Spice.error("." + ("f8" + e$22.path), e$22.message, e$22.value);
                                                       }
                                                       let e$23 = f7._0;
-                                                      return Spice.error("f7", e$23.message, e$23.value);
+                                                      return Spice.error("." + ("f7" + e$23.path), e$23.message, e$23.value);
                                                     }
                                                     let e$24 = f6._0;
-                                                    return Spice.error("f6", e$24.message, e$24.value);
+                                                    return Spice.error("." + ("f6" + e$24.path), e$24.message, e$24.value);
                                                   }
                                                   let e$25 = f5._0;
-                                                  return Spice.error("f5", e$25.message, e$25.value);
+                                                  return Spice.error("." + ("f5" + e$25.path), e$25.message, e$25.value);
                                                 }
                                                 let e$26 = f4._0;
-                                                return Spice.error("f4", e$26.message, e$26.value);
+                                                return Spice.error("." + ("f4" + e$26.path), e$26.message, e$26.value);
                                               }
                                               let e$27 = f3._0;
-                                              return Spice.error("f3", e$27.message, e$27.value);
+                                              return Spice.error("." + ("f3" + e$27.path), e$27.message, e$27.value);
                                             }
                                             let e$28 = f2._0;
-                                            return Spice.error("f2", e$28.message, e$28.value);
+                                            return Spice.error("." + ("f2" + e$28.path), e$28.message, e$28.value);
                                           }
                                           let e$29 = f1._0;
-                                          return Spice.error("f1", e$29.message, e$29.value);
+                                          return Spice.error("." + ("f1" + e$29.path), e$29.message, e$29.value);
                                         }
                                         let e$30 = i10._0;
-                                        return Spice.error("i10", e$30.message, e$30.value);
+                                        return Spice.error("." + ("i10" + e$30.path), e$30.message, e$30.value);
                                       }
                                       let e$31 = i9._0;
-                                      return Spice.error("i9", e$31.message, e$31.value);
+                                      return Spice.error("." + ("i9" + e$31.path), e$31.message, e$31.value);
                                     }
                                     let e$32 = i8._0;
-                                    return Spice.error("i8", e$32.message, e$32.value);
+                                    return Spice.error("." + ("i8" + e$32.path), e$32.message, e$32.value);
                                   }
                                   let e$33 = i7._0;
-                                  return Spice.error("i7", e$33.message, e$33.value);
+                                  return Spice.error("." + ("i7" + e$33.path), e$33.message, e$33.value);
                                 }
                                 let e$34 = i6._0;
-                                return Spice.error("i6", e$34.message, e$34.value);
+                                return Spice.error("." + ("i6" + e$34.path), e$34.message, e$34.value);
                               }
                               let e$35 = i5._0;
-                              return Spice.error("i5", e$35.message, e$35.value);
+                              return Spice.error("." + ("i5" + e$35.path), e$35.message, e$35.value);
                             }
                             let e$36 = i4._0;
-                            return Spice.error("i4", e$36.message, e$36.value);
+                            return Spice.error("." + ("i4" + e$36.path), e$36.message, e$36.value);
                           }
                           let e$37 = i3._0;
-                          return Spice.error("i3", e$37.message, e$37.value);
+                          return Spice.error("." + ("i3" + e$37.path), e$37.message, e$37.value);
                         }
                         let e$38 = i2._0;
-                        return Spice.error("i2", e$38.message, e$38.value);
+                        return Spice.error("." + ("i2" + e$38.path), e$38.message, e$38.value);
                       }
                       let e$39 = i1._0;
-                      return Spice.error("i1", e$39.message, e$39.value);
+                      return Spice.error("." + ("i1" + e$39.path), e$39.message, e$39.value);
                     }
                     let e$40 = s10._0;
-                    return Spice.error("s10", e$40.message, e$40.value);
+                    return Spice.error("." + ("s10" + e$40.path), e$40.message, e$40.value);
                   }
                   let e$41 = s9._0;
-                  return Spice.error("s9", e$41.message, e$41.value);
+                  return Spice.error("." + ("s9" + e$41.path), e$41.message, e$41.value);
                 }
                 let e$42 = s8._0;
-                return Spice.error("s8", e$42.message, e$42.value);
+                return Spice.error("." + ("s8" + e$42.path), e$42.message, e$42.value);
               }
               let e$43 = s7._0;
-              return Spice.error("s7", e$43.message, e$43.value);
+              return Spice.error("." + ("s7" + e$43.path), e$43.message, e$43.value);
             }
             let e$44 = s6._0;
-            return Spice.error("s6", e$44.message, e$44.value);
+            return Spice.error("." + ("s6" + e$44.path), e$44.message, e$44.value);
           }
           let e$45 = s5._0;
-          return Spice.error("s5", e$45.message, e$45.value);
+          return Spice.error("." + ("s5" + e$45.path), e$45.message, e$45.value);
         }
         let e$46 = s4._0;
-        return Spice.error("s4", e$46.message, e$46.value);
+        return Spice.error("." + ("s4" + e$46.path), e$46.message, e$46.value);
       }
       let e$47 = s3._0;
-      return Spice.error("s3", e$47.message, e$47.value);
+      return Spice.error("." + ("s3" + e$47.path), e$47.message, e$47.value);
     }
     let e$48 = s2._0;
-    return Spice.error("s2", e$48.message, e$48.value);
+    return Spice.error("." + ("s2" + e$48.path), e$48.message, e$48.value);
   }
   let e$49 = s1._0;
-  return Spice.error("s1", e$49.message, e$49.value);
+  return Spice.error("." + ("s1" + e$49.path), e$49.message, e$49.value);
 }
 
 function point2D_encode(v) {
@@ -2866,124 +2838,40 @@ function variantWithLargePayload_decode(v) {
                                 };
                               }
                               let e = v11._0;
-                              return {
-                                TAG: "Error",
-                                _0: {
-                                  path: "[12]" + e.path,
-                                  message: e.message,
-                                  value: e.value
-                                }
-                              };
+                              return Spice.error("[12]" + e.path, e.message, e.value);
                             }
                             let e$1 = v10._0;
-                            return {
-                              TAG: "Error",
-                              _0: {
-                                path: "[11]" + e$1.path,
-                                message: e$1.message,
-                                value: e$1.value
-                              }
-                            };
+                            return Spice.error("[11]" + e$1.path, e$1.message, e$1.value);
                           }
                           let e$2 = v9._0;
-                          return {
-                            TAG: "Error",
-                            _0: {
-                              path: "[10]" + e$2.path,
-                              message: e$2.message,
-                              value: e$2.value
-                            }
-                          };
+                          return Spice.error("[10]" + e$2.path, e$2.message, e$2.value);
                         }
                         let e$3 = v8._0;
-                        return {
-                          TAG: "Error",
-                          _0: {
-                            path: "[9]" + e$3.path,
-                            message: e$3.message,
-                            value: e$3.value
-                          }
-                        };
+                        return Spice.error("[9]" + e$3.path, e$3.message, e$3.value);
                       }
                       let e$4 = v7._0;
-                      return {
-                        TAG: "Error",
-                        _0: {
-                          path: "[8]" + e$4.path,
-                          message: e$4.message,
-                          value: e$4.value
-                        }
-                      };
+                      return Spice.error("[8]" + e$4.path, e$4.message, e$4.value);
                     }
                     let e$5 = v6._0;
-                    return {
-                      TAG: "Error",
-                      _0: {
-                        path: "[7]" + e$5.path,
-                        message: e$5.message,
-                        value: e$5.value
-                      }
-                    };
+                    return Spice.error("[7]" + e$5.path, e$5.message, e$5.value);
                   }
                   let e$6 = v5._0;
-                  return {
-                    TAG: "Error",
-                    _0: {
-                      path: "[6]" + e$6.path,
-                      message: e$6.message,
-                      value: e$6.value
-                    }
-                  };
+                  return Spice.error("[6]" + e$6.path, e$6.message, e$6.value);
                 }
                 let e$7 = v4._0;
-                return {
-                  TAG: "Error",
-                  _0: {
-                    path: "[5]" + e$7.path,
-                    message: e$7.message,
-                    value: e$7.value
-                  }
-                };
+                return Spice.error("[5]" + e$7.path, e$7.message, e$7.value);
               }
               let e$8 = v3._0;
-              return {
-                TAG: "Error",
-                _0: {
-                  path: "[4]" + e$8.path,
-                  message: e$8.message,
-                  value: e$8.value
-                }
-              };
+              return Spice.error("[4]" + e$8.path, e$8.message, e$8.value);
             }
             let e$9 = v2._0;
-            return {
-              TAG: "Error",
-              _0: {
-                path: "[3]" + e$9.path,
-                message: e$9.message,
-                value: e$9.value
-              }
-            };
+            return Spice.error("[3]" + e$9.path, e$9.message, e$9.value);
           }
           let e$10 = v1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$10.path,
-              message: e$10.message,
-              value: e$10.value
-            }
-          };
+          return Spice.error("[2]" + e$10.path, e$10.message, e$10.value);
         }
         let e$11 = v0._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$11.path,
-            message: e$11.message,
-            value: e$11.value
-          }
-        };
+        return Spice.error("[1]" + e$11.path, e$11.message, e$11.value);
       case "MediumPayload" :
         if (v.length !== 7) {
           return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
@@ -3014,64 +2902,22 @@ function variantWithLargePayload_decode(v) {
                     };
                   }
                   let e$12 = v5$1._0;
-                  return {
-                    TAG: "Error",
-                    _0: {
-                      path: "[6]" + e$12.path,
-                      message: e$12.message,
-                      value: e$12.value
-                    }
-                  };
+                  return Spice.error("[6]" + e$12.path, e$12.message, e$12.value);
                 }
                 let e$13 = v4$1._0;
-                return {
-                  TAG: "Error",
-                  _0: {
-                    path: "[5]" + e$13.path,
-                    message: e$13.message,
-                    value: e$13.value
-                  }
-                };
+                return Spice.error("[5]" + e$13.path, e$13.message, e$13.value);
               }
               let e$14 = v3$1._0;
-              return {
-                TAG: "Error",
-                _0: {
-                  path: "[4]" + e$14.path,
-                  message: e$14.message,
-                  value: e$14.value
-                }
-              };
+              return Spice.error("[4]" + e$14.path, e$14.message, e$14.value);
             }
             let e$15 = v2$1._0;
-            return {
-              TAG: "Error",
-              _0: {
-                path: "[3]" + e$15.path,
-                message: e$15.message,
-                value: e$15.value
-              }
-            };
+            return Spice.error("[3]" + e$15.path, e$15.message, e$15.value);
           }
           let e$16 = v1$1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$16.path,
-              message: e$16.message,
-              value: e$16.value
-            }
-          };
+          return Spice.error("[2]" + e$16.path, e$16.message, e$16.value);
         }
         let e$17 = v0$1._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$17.path,
-            message: e$17.message,
-            value: e$17.value
-          }
-        };
+        return Spice.error("[1]" + e$17.path, e$17.message, e$17.value);
       case "NoPayload" :
         if (v.length !== 1) {
           return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
@@ -3099,24 +2945,10 @@ function variantWithLargePayload_decode(v) {
             };
           }
           let e$18 = v1$2._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$18.path,
-              message: e$18.message,
-              value: e$18.value
-            }
-          };
+          return Spice.error("[2]" + e$18.path, e$18.message, e$18.value);
         }
         let e$19 = v0$2._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$19.path,
-            message: e$19.message,
-            value: e$19.value
-          }
-        };
+        return Spice.error("[1]" + e$19.path, e$19.message, e$19.value);
     }
   }
   return Spice.error(undefined, "Invalid variant constructor", v[0]);
@@ -3243,204 +3075,64 @@ function variantWithHugePayload_decode(v) {
                                                 };
                                               }
                                               let e = v19._0;
-                                              return {
-                                                TAG: "Error",
-                                                _0: {
-                                                  path: "[20]" + e.path,
-                                                  message: e.message,
-                                                  value: e.value
-                                                }
-                                              };
+                                              return Spice.error("[20]" + e.path, e.message, e.value);
                                             }
                                             let e$1 = v18._0;
-                                            return {
-                                              TAG: "Error",
-                                              _0: {
-                                                path: "[19]" + e$1.path,
-                                                message: e$1.message,
-                                                value: e$1.value
-                                              }
-                                            };
+                                            return Spice.error("[19]" + e$1.path, e$1.message, e$1.value);
                                           }
                                           let e$2 = v17._0;
-                                          return {
-                                            TAG: "Error",
-                                            _0: {
-                                              path: "[18]" + e$2.path,
-                                              message: e$2.message,
-                                              value: e$2.value
-                                            }
-                                          };
+                                          return Spice.error("[18]" + e$2.path, e$2.message, e$2.value);
                                         }
                                         let e$3 = v16._0;
-                                        return {
-                                          TAG: "Error",
-                                          _0: {
-                                            path: "[17]" + e$3.path,
-                                            message: e$3.message,
-                                            value: e$3.value
-                                          }
-                                        };
+                                        return Spice.error("[17]" + e$3.path, e$3.message, e$3.value);
                                       }
                                       let e$4 = v15._0;
-                                      return {
-                                        TAG: "Error",
-                                        _0: {
-                                          path: "[16]" + e$4.path,
-                                          message: e$4.message,
-                                          value: e$4.value
-                                        }
-                                      };
+                                      return Spice.error("[16]" + e$4.path, e$4.message, e$4.value);
                                     }
                                     let e$5 = v14._0;
-                                    return {
-                                      TAG: "Error",
-                                      _0: {
-                                        path: "[15]" + e$5.path,
-                                        message: e$5.message,
-                                        value: e$5.value
-                                      }
-                                    };
+                                    return Spice.error("[15]" + e$5.path, e$5.message, e$5.value);
                                   }
                                   let e$6 = v13._0;
-                                  return {
-                                    TAG: "Error",
-                                    _0: {
-                                      path: "[14]" + e$6.path,
-                                      message: e$6.message,
-                                      value: e$6.value
-                                    }
-                                  };
+                                  return Spice.error("[14]" + e$6.path, e$6.message, e$6.value);
                                 }
                                 let e$7 = v12._0;
-                                return {
-                                  TAG: "Error",
-                                  _0: {
-                                    path: "[13]" + e$7.path,
-                                    message: e$7.message,
-                                    value: e$7.value
-                                  }
-                                };
+                                return Spice.error("[13]" + e$7.path, e$7.message, e$7.value);
                               }
                               let e$8 = v11._0;
-                              return {
-                                TAG: "Error",
-                                _0: {
-                                  path: "[12]" + e$8.path,
-                                  message: e$8.message,
-                                  value: e$8.value
-                                }
-                              };
+                              return Spice.error("[12]" + e$8.path, e$8.message, e$8.value);
                             }
                             let e$9 = v10._0;
-                            return {
-                              TAG: "Error",
-                              _0: {
-                                path: "[11]" + e$9.path,
-                                message: e$9.message,
-                                value: e$9.value
-                              }
-                            };
+                            return Spice.error("[11]" + e$9.path, e$9.message, e$9.value);
                           }
                           let e$10 = v9._0;
-                          return {
-                            TAG: "Error",
-                            _0: {
-                              path: "[10]" + e$10.path,
-                              message: e$10.message,
-                              value: e$10.value
-                            }
-                          };
+                          return Spice.error("[10]" + e$10.path, e$10.message, e$10.value);
                         }
                         let e$11 = v8._0;
-                        return {
-                          TAG: "Error",
-                          _0: {
-                            path: "[9]" + e$11.path,
-                            message: e$11.message,
-                            value: e$11.value
-                          }
-                        };
+                        return Spice.error("[9]" + e$11.path, e$11.message, e$11.value);
                       }
                       let e$12 = v7._0;
-                      return {
-                        TAG: "Error",
-                        _0: {
-                          path: "[8]" + e$12.path,
-                          message: e$12.message,
-                          value: e$12.value
-                        }
-                      };
+                      return Spice.error("[8]" + e$12.path, e$12.message, e$12.value);
                     }
                     let e$13 = v6._0;
-                    return {
-                      TAG: "Error",
-                      _0: {
-                        path: "[7]" + e$13.path,
-                        message: e$13.message,
-                        value: e$13.value
-                      }
-                    };
+                    return Spice.error("[7]" + e$13.path, e$13.message, e$13.value);
                   }
                   let e$14 = v5._0;
-                  return {
-                    TAG: "Error",
-                    _0: {
-                      path: "[6]" + e$14.path,
-                      message: e$14.message,
-                      value: e$14.value
-                    }
-                  };
+                  return Spice.error("[6]" + e$14.path, e$14.message, e$14.value);
                 }
                 let e$15 = v4._0;
-                return {
-                  TAG: "Error",
-                  _0: {
-                    path: "[5]" + e$15.path,
-                    message: e$15.message,
-                    value: e$15.value
-                  }
-                };
+                return Spice.error("[5]" + e$15.path, e$15.message, e$15.value);
               }
               let e$16 = v3._0;
-              return {
-                TAG: "Error",
-                _0: {
-                  path: "[4]" + e$16.path,
-                  message: e$16.message,
-                  value: e$16.value
-                }
-              };
+              return Spice.error("[4]" + e$16.path, e$16.message, e$16.value);
             }
             let e$17 = v2._0;
-            return {
-              TAG: "Error",
-              _0: {
-                path: "[3]" + e$17.path,
-                message: e$17.message,
-                value: e$17.value
-              }
-            };
+            return Spice.error("[3]" + e$17.path, e$17.message, e$17.value);
           }
           let e$18 = v1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$18.path,
-              message: e$18.message,
-              value: e$18.value
-            }
-          };
+          return Spice.error("[2]" + e$18.path, e$18.message, e$18.value);
         }
         let e$19 = v0._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$19.path,
-            message: e$19.message,
-            value: e$19.value
-          }
-        };
+        return Spice.error("[1]" + e$19.path, e$19.message, e$19.value);
     }
   }
   return Spice.error(undefined, "Invalid variant constructor", v[0]);
@@ -3627,7 +3319,7 @@ function largePolyvariant_decode(v) {
         }
     }
   }
-  return Spice.error(undefined, "Invalid polymorphic variant constructor", v[0]);
+  return Spice.error("[0]", "Invalid polymorphic variant constructor", v[0]);
 }
 
 function polyvariantWithPayload_encode(v) {
@@ -3724,104 +3416,34 @@ function polyvariantWithPayload_decode(v) {
                             };
                           }
                           let e = v9._0;
-                          return {
-                            TAG: "Error",
-                            _0: {
-                              path: "[10]" + e.path,
-                              message: e.message,
-                              value: e.value
-                            }
-                          };
+                          return Spice.error("[10]" + e.path, e.message, e.value);
                         }
                         let e$1 = v8._0;
-                        return {
-                          TAG: "Error",
-                          _0: {
-                            path: "[9]" + e$1.path,
-                            message: e$1.message,
-                            value: e$1.value
-                          }
-                        };
+                        return Spice.error("[9]" + e$1.path, e$1.message, e$1.value);
                       }
                       let e$2 = v7._0;
-                      return {
-                        TAG: "Error",
-                        _0: {
-                          path: "[8]" + e$2.path,
-                          message: e$2.message,
-                          value: e$2.value
-                        }
-                      };
+                      return Spice.error("[8]" + e$2.path, e$2.message, e$2.value);
                     }
                     let e$3 = v6._0;
-                    return {
-                      TAG: "Error",
-                      _0: {
-                        path: "[7]" + e$3.path,
-                        message: e$3.message,
-                        value: e$3.value
-                      }
-                    };
+                    return Spice.error("[7]" + e$3.path, e$3.message, e$3.value);
                   }
                   let e$4 = v5._0;
-                  return {
-                    TAG: "Error",
-                    _0: {
-                      path: "[6]" + e$4.path,
-                      message: e$4.message,
-                      value: e$4.value
-                    }
-                  };
+                  return Spice.error("[6]" + e$4.path, e$4.message, e$4.value);
                 }
                 let e$5 = v4._0;
-                return {
-                  TAG: "Error",
-                  _0: {
-                    path: "[5]" + e$5.path,
-                    message: e$5.message,
-                    value: e$5.value
-                  }
-                };
+                return Spice.error("[5]" + e$5.path, e$5.message, e$5.value);
               }
               let e$6 = v3._0;
-              return {
-                TAG: "Error",
-                _0: {
-                  path: "[4]" + e$6.path,
-                  message: e$6.message,
-                  value: e$6.value
-                }
-              };
+              return Spice.error("[4]" + e$6.path, e$6.message, e$6.value);
             }
             let e$7 = v2._0;
-            return {
-              TAG: "Error",
-              _0: {
-                path: "[3]" + e$7.path,
-                message: e$7.message,
-                value: e$7.value
-              }
-            };
+            return Spice.error("[3]" + e$7.path, e$7.message, e$7.value);
           }
           let e$8 = v1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$8.path,
-              message: e$8.message,
-              value: e$8.value
-            }
-          };
+          return Spice.error("[2]" + e$8.path, e$8.message, e$8.value);
         }
         let e$9 = v0._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$9.path,
-            message: e$9.message,
-            value: e$9.value
-          }
-        };
+        return Spice.error("[1]" + e$9.path, e$9.message, e$9.value);
       case "Medium" :
         if (v.length !== 6) {
           return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
@@ -3851,54 +3473,19 @@ function polyvariantWithPayload_decode(v) {
                   };
                 }
                 let e$10 = v4$1._0;
-                return {
-                  TAG: "Error",
-                  _0: {
-                    path: "[5]" + e$10.path,
-                    message: e$10.message,
-                    value: e$10.value
-                  }
-                };
+                return Spice.error("[5]" + e$10.path, e$10.message, e$10.value);
               }
               let e$11 = v3$1._0;
-              return {
-                TAG: "Error",
-                _0: {
-                  path: "[4]" + e$11.path,
-                  message: e$11.message,
-                  value: e$11.value
-                }
-              };
+              return Spice.error("[4]" + e$11.path, e$11.message, e$11.value);
             }
             let e$12 = v2$1._0;
-            return {
-              TAG: "Error",
-              _0: {
-                path: "[3]" + e$12.path,
-                message: e$12.message,
-                value: e$12.value
-              }
-            };
+            return Spice.error("[3]" + e$12.path, e$12.message, e$12.value);
           }
           let e$13 = v1$1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$13.path,
-              message: e$13.message,
-              value: e$13.value
-            }
-          };
+          return Spice.error("[2]" + e$13.path, e$13.message, e$13.value);
         }
         let e$14 = v0$1._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$14.path,
-            message: e$14.message,
-            value: e$14.value
-          }
-        };
+        return Spice.error("[1]" + e$14.path, e$14.message, e$14.value);
       case "None" :
         if (v.length !== 1) {
           return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
@@ -3928,27 +3515,13 @@ function polyvariantWithPayload_decode(v) {
             };
           }
           let e$15 = v1$2._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$15.path,
-              message: e$15.message,
-              value: e$15.value
-            }
-          };
+          return Spice.error("[2]" + e$15.path, e$15.message, e$15.value);
         }
         let e$16 = v0$2._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$16.path,
-            message: e$16.message,
-            value: e$16.value
-          }
-        };
+        return Spice.error("[1]" + e$16.path, e$16.message, e$16.value);
     }
   }
-  return Spice.error(undefined, "Invalid polymorphic variant constructor", v[0]);
+  return Spice.error("[0]", "Invalid polymorphic variant constructor", v[0]);
 }
 
 function polyvariantHugePayload_encode(v) {
@@ -4074,207 +3647,67 @@ function polyvariantHugePayload_decode(v) {
                                                 };
                                               }
                                               let e = v19._0;
-                                              return {
-                                                TAG: "Error",
-                                                _0: {
-                                                  path: "[20]" + e.path,
-                                                  message: e.message,
-                                                  value: e.value
-                                                }
-                                              };
+                                              return Spice.error("[20]" + e.path, e.message, e.value);
                                             }
                                             let e$1 = v18._0;
-                                            return {
-                                              TAG: "Error",
-                                              _0: {
-                                                path: "[19]" + e$1.path,
-                                                message: e$1.message,
-                                                value: e$1.value
-                                              }
-                                            };
+                                            return Spice.error("[19]" + e$1.path, e$1.message, e$1.value);
                                           }
                                           let e$2 = v17._0;
-                                          return {
-                                            TAG: "Error",
-                                            _0: {
-                                              path: "[18]" + e$2.path,
-                                              message: e$2.message,
-                                              value: e$2.value
-                                            }
-                                          };
+                                          return Spice.error("[18]" + e$2.path, e$2.message, e$2.value);
                                         }
                                         let e$3 = v16._0;
-                                        return {
-                                          TAG: "Error",
-                                          _0: {
-                                            path: "[17]" + e$3.path,
-                                            message: e$3.message,
-                                            value: e$3.value
-                                          }
-                                        };
+                                        return Spice.error("[17]" + e$3.path, e$3.message, e$3.value);
                                       }
                                       let e$4 = v15._0;
-                                      return {
-                                        TAG: "Error",
-                                        _0: {
-                                          path: "[16]" + e$4.path,
-                                          message: e$4.message,
-                                          value: e$4.value
-                                        }
-                                      };
+                                      return Spice.error("[16]" + e$4.path, e$4.message, e$4.value);
                                     }
                                     let e$5 = v14._0;
-                                    return {
-                                      TAG: "Error",
-                                      _0: {
-                                        path: "[15]" + e$5.path,
-                                        message: e$5.message,
-                                        value: e$5.value
-                                      }
-                                    };
+                                    return Spice.error("[15]" + e$5.path, e$5.message, e$5.value);
                                   }
                                   let e$6 = v13._0;
-                                  return {
-                                    TAG: "Error",
-                                    _0: {
-                                      path: "[14]" + e$6.path,
-                                      message: e$6.message,
-                                      value: e$6.value
-                                    }
-                                  };
+                                  return Spice.error("[14]" + e$6.path, e$6.message, e$6.value);
                                 }
                                 let e$7 = v12._0;
-                                return {
-                                  TAG: "Error",
-                                  _0: {
-                                    path: "[13]" + e$7.path,
-                                    message: e$7.message,
-                                    value: e$7.value
-                                  }
-                                };
+                                return Spice.error("[13]" + e$7.path, e$7.message, e$7.value);
                               }
                               let e$8 = v11._0;
-                              return {
-                                TAG: "Error",
-                                _0: {
-                                  path: "[12]" + e$8.path,
-                                  message: e$8.message,
-                                  value: e$8.value
-                                }
-                              };
+                              return Spice.error("[12]" + e$8.path, e$8.message, e$8.value);
                             }
                             let e$9 = v10._0;
-                            return {
-                              TAG: "Error",
-                              _0: {
-                                path: "[11]" + e$9.path,
-                                message: e$9.message,
-                                value: e$9.value
-                              }
-                            };
+                            return Spice.error("[11]" + e$9.path, e$9.message, e$9.value);
                           }
                           let e$10 = v9._0;
-                          return {
-                            TAG: "Error",
-                            _0: {
-                              path: "[10]" + e$10.path,
-                              message: e$10.message,
-                              value: e$10.value
-                            }
-                          };
+                          return Spice.error("[10]" + e$10.path, e$10.message, e$10.value);
                         }
                         let e$11 = v8._0;
-                        return {
-                          TAG: "Error",
-                          _0: {
-                            path: "[9]" + e$11.path,
-                            message: e$11.message,
-                            value: e$11.value
-                          }
-                        };
+                        return Spice.error("[9]" + e$11.path, e$11.message, e$11.value);
                       }
                       let e$12 = v7._0;
-                      return {
-                        TAG: "Error",
-                        _0: {
-                          path: "[8]" + e$12.path,
-                          message: e$12.message,
-                          value: e$12.value
-                        }
-                      };
+                      return Spice.error("[8]" + e$12.path, e$12.message, e$12.value);
                     }
                     let e$13 = v6._0;
-                    return {
-                      TAG: "Error",
-                      _0: {
-                        path: "[7]" + e$13.path,
-                        message: e$13.message,
-                        value: e$13.value
-                      }
-                    };
+                    return Spice.error("[7]" + e$13.path, e$13.message, e$13.value);
                   }
                   let e$14 = v5._0;
-                  return {
-                    TAG: "Error",
-                    _0: {
-                      path: "[6]" + e$14.path,
-                      message: e$14.message,
-                      value: e$14.value
-                    }
-                  };
+                  return Spice.error("[6]" + e$14.path, e$14.message, e$14.value);
                 }
                 let e$15 = v4._0;
-                return {
-                  TAG: "Error",
-                  _0: {
-                    path: "[5]" + e$15.path,
-                    message: e$15.message,
-                    value: e$15.value
-                  }
-                };
+                return Spice.error("[5]" + e$15.path, e$15.message, e$15.value);
               }
               let e$16 = v3._0;
-              return {
-                TAG: "Error",
-                _0: {
-                  path: "[4]" + e$16.path,
-                  message: e$16.message,
-                  value: e$16.value
-                }
-              };
+              return Spice.error("[4]" + e$16.path, e$16.message, e$16.value);
             }
             let e$17 = v2._0;
-            return {
-              TAG: "Error",
-              _0: {
-                path: "[3]" + e$17.path,
-                message: e$17.message,
-                value: e$17.value
-              }
-            };
+            return Spice.error("[3]" + e$17.path, e$17.message, e$17.value);
           }
           let e$18 = v1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$18.path,
-              message: e$18.message,
-              value: e$18.value
-            }
-          };
+          return Spice.error("[2]" + e$18.path, e$18.message, e$18.value);
         }
         let e$19 = v0._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$19.path,
-            message: e$19.message,
-            value: e$19.value
-          }
-        };
+        return Spice.error("[1]" + e$19.path, e$19.message, e$19.value);
     }
   }
-  return Spice.error(undefined, "Invalid polymorphic variant constructor", v[0]);
+  return Spice.error("[0]", "Invalid polymorphic variant constructor", v[0]);
 }
 
 let userId_encode = Spice.intToJson;

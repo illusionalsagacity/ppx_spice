@@ -71,7 +71,7 @@ function t1_decode(v) {
         }
     }
   }
-  return Spice.error(undefined, "Invalid polymorphic variant constructor", v[0]);
+  return Spice.error("[0]", "Invalid polymorphic variant constructor", v[0]);
 }
 
 function t2_encode(v) {
@@ -105,7 +105,7 @@ function t2_decode(v) {
   }
 }
 
-function withArgs_encode(v) {
+function t3_encode(v) {
   if (typeof v !== "object") {
     return ["None"];
   }
@@ -124,7 +124,7 @@ function withArgs_encode(v) {
   ];
 }
 
-function withArgs_decode(v) {
+function t3_decode(v) {
   if (!Array.isArray(v)) {
     return Spice.error(undefined, "Not a polyvariant", v);
   }
@@ -157,34 +157,13 @@ function withArgs_decode(v) {
               };
             }
             let e = v2._0;
-            return {
-              TAG: "Error",
-              _0: {
-                path: "[3]" + e.path,
-                message: e.message,
-                value: e.value
-              }
-            };
+            return Spice.error("[3]" + e.path, e.message, e.value);
           }
           let e$1 = v1._0;
-          return {
-            TAG: "Error",
-            _0: {
-              path: "[2]" + e$1.path,
-              message: e$1.message,
-              value: e$1.value
-            }
-          };
+          return Spice.error("[2]" + e$1.path, e$1.message, e$1.value);
         }
         let e$2 = v0._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$2.path,
-            message: e$2.message,
-            value: e$2.value
-          }
-        };
+        return Spice.error("[1]" + e$2.path, e$2.message, e$2.value);
       case "None" :
         if (v.length !== 1) {
           return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
@@ -209,17 +188,10 @@ function withArgs_decode(v) {
           };
         }
         let e$3 = v0$1._0;
-        return {
-          TAG: "Error",
-          _0: {
-            path: "[1]" + e$3.path,
-            message: e$3.message,
-            value: e$3.value
-          }
-        };
+        return Spice.error("[1]" + e$3.path, e$3.message, e$3.value);
     }
   }
-  return Spice.error(undefined, "Invalid polymorphic variant constructor", v[0]);
+  return Spice.error("[0]", "Invalid polymorphic variant constructor", v[0]);
 }
 
 export {
@@ -229,7 +201,7 @@ export {
   t1_decode,
   t2_encode,
   t2_decode,
-  withArgs_encode,
-  withArgs_decode,
+  t3_encode,
+  t3_decode,
 }
 /* No side effect */

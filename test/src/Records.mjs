@@ -33,10 +33,10 @@ function t_decode(v) {
       };
     }
     let e = value._0;
-    return Spice.error("spice-value", e.message, e.value);
+    return Spice.error("." + ("spice-value" + e.path), e.message, e.value);
   }
   let e$1 = label._0;
-  return Spice.error("spice-label", e$1.message, e$1.value);
+  return Spice.error("." + ("spice-label" + e$1.path), e$1.message, e$1.value);
 }
 
 function t1_encode(v) {
@@ -69,10 +69,10 @@ function t1_decode(v) {
       };
     }
     let e = value._0;
-    return Spice.error("value", e.message, e.value);
+    return Spice.error("." + ("value" + e.path), e.message, e.value);
   }
   let e$1 = label._0;
-  return Spice.error("label", e$1.message, e$1.value);
+  return Spice.error("." + ("label" + e$1.path), e$1.message, e$1.value);
 }
 
 function tOp_encode(v) {
@@ -113,10 +113,10 @@ function tOp_decode(v) {
       };
     }
     let e = value._0;
-    return Spice.error("value", e.message, e.value);
+    return Spice.error("." + ("value" + e.path), e.message, e.value);
   }
   let e$1 = label._0;
-  return Spice.error("label", e$1.message, e$1.value);
+  return Spice.error("." + ("label" + e$1.path), e$1.message, e$1.value);
 }
 
 function t2_encode(v) {
@@ -173,16 +173,16 @@ function t2_decode(v) {
           };
         }
         let e = n2._0;
-        return Spice.error("n2", e.message, e.value);
+        return Spice.error("." + ("n2" + e.path), e.message, e.value);
       }
       let e$1 = on._0;
-      return Spice.error("on", e$1.message, e$1.value);
+      return Spice.error("." + ("on" + e$1.path), e$1.message, e$1.value);
     }
     let e$2 = n._0;
-    return Spice.error("n", e$2.message, e$2.value);
+    return Spice.error("." + ("n" + e$2.path), e$2.message, e$2.value);
   }
   let e$3 = o._0;
-  return Spice.error("o", e$3.message, e$3.value);
+  return Spice.error("." + ("o" + e$3.path), e$3.message, e$3.value);
 }
 
 function t3_encode(v) {
@@ -222,10 +222,10 @@ function t3_decode(v) {
       };
     }
     let e = value2._0;
-    return Spice.error("value2", e.message, e.value);
+    return Spice.error("." + ("value2" + e.path), e.message, e.value);
   }
   let e$1 = value._0;
-  return Spice.error("value", e$1.message, e$1.value);
+  return Spice.error("." + ("value" + e$1.path), e$1.message, e$1.value);
 }
 
 function t4_encode(v) {
@@ -273,13 +273,13 @@ function t4_decode(v) {
         };
       }
       let e = c._0;
-      return Spice.error("c", e.message, e.value);
+      return Spice.error("." + ("c" + e.path), e.message, e.value);
     }
     let e$1 = b._0;
-    return Spice.error("b", e$1.message, e$1.value);
+    return Spice.error("." + ("b" + e$1.path), e$1.message, e$1.value);
   }
   let e$2 = a._0;
-  return Spice.error("a", e$2.message, e$2.value);
+  return Spice.error("." + ("a" + e$2.path), e$2.message, e$2.value);
 }
 
 export {

@@ -101,7 +101,7 @@ let generate_nested_switches decls =
                        (Typ.constr
                           (mknoloc (Longident.parse "Spice.decodeError"))
                           []))))
-              [%expr Spice.error ~path:[%e key] e.message e.value]
+              [%expr Spice.error ~path:("." ^ [%e key] ^ e.path) e.message e.value]
           in
           let match_expr = Exp.match_ decode_expr [ ok_case; error_case ] in
           loop match_expr rest

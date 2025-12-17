@@ -61,14 +61,14 @@ Zora.test("polymorphic variants with @spice.as number", t => {
 });
 
 Zora.test("polymorphic variants with arguments", t => {
-  let encoded = Polyvariants.withArgs_encode("None");
+  let encoded = Polyvariants.t3_encode("None");
   testEqual(t, "encode #None", encoded, ["None"]);
-  let decoded = Polyvariants.withArgs_decode(["None"]);
+  let decoded = Polyvariants.t3_decode(["None"]);
   testEqual(t, "decode #None", decoded, {
     TAG: "Ok",
     _0: "None"
   });
-  let encoded$1 = Polyvariants.withArgs_encode({
+  let encoded$1 = Polyvariants.t3_encode({
     NAME: "Single",
     VAL: 42
   });
@@ -76,7 +76,7 @@ Zora.test("polymorphic variants with arguments", t => {
     "Single",
     42.0
   ]);
-  let decoded$1 = Polyvariants.withArgs_decode([
+  let decoded$1 = Polyvariants.t3_decode([
     "Single",
     42.0
   ]);
@@ -87,7 +87,7 @@ Zora.test("polymorphic variants with arguments", t => {
       VAL: 42
     }
   });
-  let encoded$2 = Polyvariants.withArgs_encode({
+  let encoded$2 = Polyvariants.t3_encode({
     NAME: "Multiple",
     VAL: [
       "hello",
@@ -101,7 +101,7 @@ Zora.test("polymorphic variants with arguments", t => {
     123.0,
     true
   ]);
-  let decoded$2 = Polyvariants.withArgs_decode([
+  let decoded$2 = Polyvariants.t3_decode([
     "Multiple",
     "hello",
     123.0,
@@ -118,7 +118,7 @@ Zora.test("polymorphic variants with arguments", t => {
       ]
     }
   });
-  let decoded$3 = Polyvariants.withArgs_decode([
+  let decoded$3 = Polyvariants.t3_decode([
     "Single",
     "not an int"
   ]);
@@ -129,7 +129,7 @@ Zora.test("polymorphic variants with arguments", t => {
     }
     t.equal(decoded$3._0.path, "[1]", "error path should be [1]");
   });
-  let decoded$4 = Polyvariants.withArgs_decode([
+  let decoded$4 = Polyvariants.t3_decode([
     "Multiple",
     "hello",
     "not an int",

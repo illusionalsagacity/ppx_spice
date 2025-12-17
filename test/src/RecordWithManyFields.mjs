@@ -184,49 +184,49 @@ function params_decode(v) {
                                 };
                               }
                               let e = submitMode._0;
-                              return Spice.error("submitMode", e.message, e.value);
+                              return Spice.error("." + ("submitMode" + e.path), e.message, e.value);
                             }
                             let e$1 = useBannerLink._0;
-                            return Spice.error("useBannerLink", e$1.message, e$1.value);
+                            return Spice.error("." + ("useBannerLink" + e$1.path), e$1.message, e$1.value);
                           }
                           let e$2 = alwaysShowEngAddr._0;
-                          return Spice.error("alwaysShowEngAddr", e$2.message, e$2.value);
+                          return Spice.error("." + ("alwaysShowEngAddr" + e$2.path), e$2.message, e$2.value);
                         }
                         let e$3 = hideEngBtn._0;
-                        return Spice.error("hideEngBtn", e$3.message, e$3.value);
+                        return Spice.error("." + ("hideEngBtn" + e$3.path), e$3.message, e$3.value);
                       }
                       let e$4 = hideMapBtn._0;
-                      return Spice.error("hideMapBtn", e$4.message, e$4.value);
+                      return Spice.error("." + ("hideMapBtn" + e$4.path), e$4.message, e$4.value);
                     }
                     let e$5 = showMoreHName._0;
-                    return Spice.error("showMoreHName", e$5.message, e$5.value);
+                    return Spice.error("." + ("showMoreHName" + e$5.path), e$5.message, e$5.value);
                   }
                   let e$6 = maxSuggestItems._0;
-                  return Spice.error("maxSuggestItems", e$6.message, e$6.value);
+                  return Spice.error("." + ("maxSuggestItems" + e$6.path), e$6.message, e$6.value);
                 }
                 let e$7 = pleaseReadGuideTimer._0;
-                return Spice.error("pleaseReadGuideTimer", e$7.message, e$7.value);
+                return Spice.error("." + ("pleaseReadGuideTimer" + e$7.path), e$7.message, e$7.value);
               }
               let e$8 = pleaseReadGuide._0;
-              return Spice.error("pleaseReadGuide", e$8.message, e$8.value);
+              return Spice.error("." + ("pleaseReadGuide" + e$8.path), e$8.message, e$8.value);
             }
             let e$9 = shorthand._0;
-            return Spice.error("shorthand", e$9.message, e$9.value);
+            return Spice.error("." + ("shorthand" + e$9.path), e$9.message, e$9.value);
           }
           let e$10 = autoMapping._0;
-          return Spice.error("autoMapping", e$10.message, e$10.value);
+          return Spice.error("." + ("autoMapping" + e$10.path), e$10.message, e$10.value);
         }
         let e$11 = focusInput._0;
-        return Spice.error("focusInput", e$11.message, e$11.value);
+        return Spice.error("." + ("focusInput" + e$11.path), e$11.message, e$11.value);
       }
       let e$12 = animation._0;
-      return Spice.error("animation", e$12.message, e$12.value);
+      return Spice.error("." + ("animation" + e$12.path), e$12.message, e$12.value);
     }
     let e$13 = height._0;
-    return Spice.error("height", e$13.message, e$13.value);
+    return Spice.error("." + ("height" + e$13.path), e$13.message, e$13.value);
   }
   let e$14 = width._0;
-  return Spice.error("width", e$14.message, e$14.value);
+  return Spice.error("." + ("width" + e$14.path), e$14.message, e$14.value);
 }
 
 export {

@@ -37,10 +37,10 @@ function td_decode(v) {
       };
     }
     let e = nickname._0;
-    return Spice.error("nickname", e.message, e.value);
+    return Spice.error("." + ("nickname" + e.path), e.message, e.value);
   }
   let e$1 = name._0;
-  return Spice.error("name", e$1.message, e$1.value);
+  return Spice.error("." + ("name" + e$1.path), e$1.message, e$1.value);
 }
 
 export {

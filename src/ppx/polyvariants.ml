@@ -122,10 +122,8 @@ let generate_arg_decoder generator_settings args constructor_name =
                              (Longident.Ldot
                                 (Longident.Lident "Spice", "decodeError")))
                           []))))
-              [%expr
-                Error
-                  (* +1 because index 0 is the constructor *)
-                  { e with path = [%e index_const (i + 1)] ^ e.path }]
+              (* +1 because index 0 is the constructor *)
+              [%expr Spice.error ~path:([%e index_const (i + 1)] ^ e.path) e.message e.value]
           in
           let match_expr = Exp.match_ decode_expr [ ok_case; error_case ] in
           loop match_expr rest
@@ -311,7 +309,7 @@ let generate_codecs ({ do_encode; do_decode } as generator_settings) row_fields
               pc_guard = None;
               pc_rhs =
                 [%expr
-                  Spice.error "Invalid polymorphic variant constructor"
+                  Spice.error ~path:"[0]" "Invalid polymorphic variant constructor"
                     (Array.getUnsafe json_arr 0)];
             }
           in

@@ -1,5 +1,5 @@
 {
-  "name": "@mununki/ppx-spice",
+  "name": "@illusionalsagacity/ppx_spice",
   "sources": [
     {
       "dir": "src",

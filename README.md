@@ -128,28 +128,34 @@ Read our [Guide with examples](docs/GUIDE.md)
 
 ### Compatibility on the compiler versions
 
-| Compiler | Ppx_spice      |
-| -------- | -------------- |
-| v11      | >= v0.2.1-rc.1 |
-| v10      | ~<= v0.1.15    |
+This branch (`rescript-11`, published under the `rescript-11` dist-tag) is for ReScript 11.
+For ReScript 12, use the `latest` dist-tag.
+
+| Compiler | Ppx_spice                       |
+| -------- | ------------------------------- |
+| v12      | `latest` (>= v0.3.0)            |
+| v11      | `rescript-11` (v0.2.x, >= v0.2.11) |
+| v10      | ~<= v0.1.15                     |
+
+Only uncurried mode (ReScript 11's default) is supported. `None` encodes as `null`.
 
 ```sh
-yarn add -D @greenlabs/ppx-spice
+yarn add -D @illusionalsagacity/ppx_spice@rescript-11
 ```
 
 ```json
-// bsconfig.json
+// rescript.json
 
 "bs-dependencies": [
-  "@greenlabs/ppx-spice"
+  "@illusionalsagacity/ppx_spice"
 ],
 "ppx-flags": [
   ...,
-  ["@greenlabs/ppx-spice/ppx", "-uncurried"]
+  "@illusionalsagacity/ppx_spice/ppx"
 ],
 ```
 
-> If you want to set it to uncurried mode, add `-uncurried`.
+> The `-uncurried` flag is still accepted for compatibility, but has no effect.
 
 ## Development
 
@@ -160,7 +166,7 @@ Make sure running the below commands in `/src`.
 1. Create a sandbox with opam
 
 ```
-opam switch create spice 4.12.1
+opam switch create spice 4.14.2
 ```
 
 2. Install dependencies
@@ -183,11 +189,11 @@ Make sure running tests in `/test`
 cd test
 
 (install dependencies)
-yarn
+pnpm install
 
 (build --watch)
-yarn res:clean && yarn res:watch
+pnpm res:clean && pnpm res:watch
 
 (run test --watch)
-yarn test:watch
+pnpm test:watch
 ```

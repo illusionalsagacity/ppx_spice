@@ -1,0 +1,242 @@
+# AGENTS.md
+
+This document provides guidelines for AI coding agents working on the ppx_spice project.
+
+## Project Overview
+
+ppx_spice is a ReScript PPX that generates JSON (de)serializers. It is written in OCaml
+and uses ppxlib for AST manipulation. The PPX processes ReScript type definitions annotated
+with `@spice` and generates corresponding `_encode` and `_decode` functions.
+
+This is the `rescript-11` branch: it targets ReScript 11 (uncurried mode only) and generates
+code against `Js.Json` / `Js.Dict` / `Belt`. Keep generated code and `src/rescript/Spice.res`
+compatible with ReScript 11.0 and 11.1; `main` is the ReScript 12 line.
+
+## Build Commands
+
+All OCaml build commands must be run from the `src/` directory:
+
+```bash
+# Navigate to source directory
+cd src
+
+# Create opam switch (first time setup)
+opam switch create spice 4.14.2
+
+# Install dependencies
+opam install . --deps-only
+
+# Build the PPX
+dune build
+
+# Build with static linking (for releases)
+dune build --profile static
+
+# Clean build artifacts
+dune clean
+```
+
+## Test Commands
+
+Tests are written in ReScript and located in the `test/` directory:
+
+```bash
+# Navigate to test directory
+cd test
+
+# Install dependencies
+pnpm install
+
+# Build ReScript code
+pnpm res:build
+
+# Clean and rebuild
+pnpm res:clean && pnpm res:build
+
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run a single test file
+pta './test/__tests__/spec/<test_name>_test.mjs' | tap-difflet
+
+# Example: Run only records tests
+pta './test/__tests__/spec/records_test.mjs' | tap-difflet
+```
+
+### Development Workflow
+
+1. Make changes to OCaml code in `src/ppx/`
+2. Run `dune build` in `src/`
+3. Navigate to `test/` and run `pnpm res:clean && pnpm res:build`
+4. Run `pnpm test` to verify changes
+
+## Project Structure
+
+```
+ppx_spice/
+├── src/ppx/                  # OCaml PPX implementation
+│   ├── ppx_spice.ml          # Entry point, registers transformation
+│   ├── codecs.ml             # Primitive type codec generation
+│   ├── records.ml            # Record encoder/decoder generation
+│   ├── variants.ml           # Variant type handling
+│   ├── polyvariants.ml       # Polymorphic variant handling
+│   ├── tuple.ml              # Tuple handling
+│   ├── decode_cases.ml       # Shared error cases for tuple/variant argument decoding
+│   ├── structure.ml          # Implementation (.ml) processing
+│   ├── signature.ml          # Interface (.mli) processing
+│   └── utils.ml              # Shared utilities
+├── src/bin/bin.ml            # Executable entry point
+├── test/src/                 # ReScript test source types
+└── test/test/__tests__/      # Test specifications
+```
+
+### PPX Integration (rescript.json)
+```json
+{
+  "ppx-flags": ["@illusionalsagacity/ppx_spice/ppx"],
+  "warnings": { "error": true, "number": "-48" }
+}
+```
+
+## Code Style Guidelines
+
+### OCaml Code Style
+
+#### Formatting
+- Use 2 spaces for indentation
+- Use LF line endings
+- Insert final newline at end of files
+- Maximum line length: ~100 characters (soft limit)
+
+#### Imports
+Always open modules in this order at the top of each file:
+```ocaml
+open Ppxlib
+open Parsetree
+open Ast_helper
+open Utils  (* Local utilities last *)
+```
+
+#### Type Definitions
+- Define types at the top of the module, after opens
+- Use record types for complex data structures:
+```ocaml
+type parsed_decl = {
+  name : string;
+  key : expression;
+  field : expression;
+  codecs : expression option * expression option;
+}
+```
+
+#### Naming Conventions
+- Module names: PascalCase (`Records`, `Variants`, `Polyvariants`)
+- Function names: snake_case (`generate_encoder`, `parse_decl`)
+- Type names: snake_case (`parsed_decl`, `generator_settings`)
+- Variables: snake_case (`type_name`, `param_names`)
+- Constants/suffixes: snake_case with descriptive names
+  - `encoder_func_suffix = "_encode"`
+  - `decoder_func_suffix = "_decode"`
+
+#### Error Handling
+- Use `Result` type for operations that can fail
+- Use `fail` function from `Utils` to raise location-aware errors:
+```ocaml
+let fail loc message = Location.raise_errorf ~loc "%s" message
+
+(* Usage *)
+| Ptyp_any -> fail ptyp_loc "Can't generate codecs for `any` type"
+```
+
+#### Pattern Matching
+- Prefer exhaustive pattern matching
+- Use `_` prefix for intentionally unused variables
+- Group related cases together:
+```ocaml
+match ptype_kind with
+| Ptype_abstract -> (* handle abstract *)
+| Ptype_variant decls -> (* handle variant *)
+| Ptype_record decls -> (* handle record *)
+| _ -> fail ptype_loc "This type is not handled by spice"
+```
+
+#### PPX-Specific Patterns
+- Use ppxlib metaquot for AST construction: `[%expr ...]`, `[%pat? ...]`, `[%type: ...]`
+- Always attach `res.arity` attribute for ReScript function compatibility
+- Use `Utils.expr_func ~arity:1` for single-argument functions
+
+### ReScript Test Code Style
+
+#### Test Structure
+```rescript
+open Zora
+
+zoraBlock("descriptive test block name", t => {
+  // Setup
+  let sampleJson = ...
+  let expected = ...
+
+  // Execute
+  let result = SomeModule.function(input)
+
+  // Assert
+  t->test("assertion description", async t => {
+    t->equal(result, expected, "message")
+  })
+})
+```
+
+#### Naming
+- Test files: `<module>_test.res` (e.g., `records_test.res`)
+- Test blocks: Descriptive phrases in quotes
+
+## Dependencies
+
+### OCaml Dependencies (from opam)
+- `ocaml` >= 4.14.0, <= 4.14.2
+- `dune` >= 2.8
+- `ppxlib` = 0.28.0
+
+### ReScript Dependencies (test only)
+- `rescript` 11.x (CI tests 11.0.1 and 11.1.4)
+- `@dusty-phillips/rescript-zora` ^4.0.0
+
+## Common Patterns
+
+### Generated Function Names
+The PPX generates functions with these naming patterns:
+- Encoder: `<type_name>_encode`
+- Decoder: `<type_name>_decode`
+
+### Attribute Handling
+```ocaml
+(* Check for attribute *)
+match get_attribute_by_name attributes "spice.key" with
+| Ok (Some attr) -> (* attribute present *)
+| Ok None -> (* attribute absent *)
+| Error s -> fail loc s
+```
+
+### Codec Generation Flow
+1. `ppx_spice.ml` registers the transformation
+2. `structure.ml` / `signature.ml` process type declarations
+3. `codecs.ml` handles primitive types
+4. `records.ml`, `variants.ml`, `polyvariants.ml` handle complex types
+5. Generated AST is returned to the compiler
+
+## CI/CD
+
+GitHub Actions workflows are in `.github/workflows/`:
+- `build.yml` - Builds the PPX for Linux (x64, arm64), macOS (x64, arm64) and Windows (x64).
+  Manually dispatchable, and reused by `publish.yml`.
+- `publish.yml` - Builds via `build.yml`, then publishes the NPM package and GitHub release
+  under the `rescript-11` dist-tag by default
+- `test.yml` - Runs the test suite on ReScript 11.0.1 and 11.1.4, and checks the committed `.mjs`
+  output is up to date
+
+Builds use OCaml 4.14.2. Linux binaries are statically linked against musl in Alpine for
+portability. Each build verifies the binary architecture, and `postInstall.js` / `ppx` select
+the binary by `process.platform` / `process.arch`.

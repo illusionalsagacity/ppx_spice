@@ -254,6 +254,27 @@ function optionFromJson(decoder, json) {
   }
 }
 
+function nullToJson(encoder, value) {
+  if (value === null) {
+    return null;
+  } else {
+    return encoder(value);
+  }
+}
+
+function nullFromJson(decoder, json) {
+  if (!Array.isArray(json) && (json === null || typeof json !== "object") && typeof json !== "number" && typeof json !== "string" && typeof json !== "boolean") {
+    return {
+            TAG: "Ok",
+            _0: null
+          };
+  } else {
+    return Belt_Result.map(decoder(json), (function (v) {
+                  return v;
+                }));
+  }
+}
+
 function resultToJson(okEncoder, errorEncoder, result) {
   var tmp;
   tmp = result.TAG === "Ok" ? [
@@ -445,6 +466,8 @@ export {
   filterOptional ,
   optionToJson ,
   optionFromJson ,
+  nullToJson ,
+  nullFromJson ,
   resultToJson ,
   resultFromJson ,
   dictToJson ,

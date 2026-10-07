@@ -187,6 +187,61 @@ Zora.test("generic record with multiple type parameters", (function (t) {
             });
       }));
 
+Zora.test("record with Js.Null.t", (function (t) {
+        var empty = {
+          o: undefined,
+          n: null,
+          n2: null
+        };
+        var emptyJson = Js_dict.fromArray([
+              [
+                "o",
+                null
+              ],
+              [
+                "n",
+                null
+              ],
+              [
+                "n2",
+                null
+              ]
+            ]);
+        testEqual(t, "encode None and Null as null", Records.withNull_encode(empty), emptyJson);
+        testEqual(t, "decode null", Records.withNull_decode(emptyJson), {
+              TAG: "Ok",
+              _0: empty
+            });
+        testEqual(t, "decode missing keys", Records.withNull_decode({}), {
+              TAG: "Ok",
+              _0: empty
+            });
+        var full = {
+          o: "o",
+          n: "n",
+          n2: 2
+        };
+        var fullJson = Js_dict.fromArray([
+              [
+                "o",
+                "o"
+              ],
+              [
+                "n",
+                "n"
+              ],
+              [
+                "n2",
+                2
+              ]
+            ]);
+        testEqual(t, "encode values", Records.withNull_encode(full), fullJson);
+        testEqual(t, "decode values", Records.withNull_decode(fullJson), {
+              TAG: "Ok",
+              _0: full
+            });
+      }));
+
 export {
   testEqual ,
 }

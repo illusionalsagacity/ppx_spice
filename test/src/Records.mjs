@@ -544,6 +544,91 @@ function t7_decode(decoder_a) {
   };
 }
 
+function withNull_encode(v) {
+  return Js_dict.fromArray(Spice.filterOptional([
+                  [
+                    "o",
+                    false,
+                    (function (extra) {
+                          return Spice.optionToJson(Spice.stringToJson, extra);
+                        })(v.o)
+                  ],
+                  [
+                    "n",
+                    false,
+                    (function (extra) {
+                          return Spice.nullToJson(Spice.stringToJson, extra);
+                        })(v.n)
+                  ],
+                  [
+                    "n2",
+                    false,
+                    (function (extra) {
+                          return Spice.nullToJson(Spice.intToJson, extra);
+                        })(v.n2)
+                  ]
+                ]));
+}
+
+function withNull_decode(v) {
+  if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  if (!(typeof v === "object" && !Array.isArray(v))) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  var o = (function (extra) {
+        return Spice.optionFromJson(Spice.stringFromJson, extra);
+      })(Belt_Option.getWithDefault(Js_dict.get(v, "o"), null));
+  if (o.TAG === "Ok") {
+    var n = (function (extra) {
+          return Spice.nullFromJson(Spice.stringFromJson, extra);
+        })(Belt_Option.getWithDefault(Js_dict.get(v, "n"), null));
+    if (n.TAG === "Ok") {
+      var n2 = (function (extra) {
+            return Spice.nullFromJson(Spice.intFromJson, extra);
+          })(Belt_Option.getWithDefault(Js_dict.get(v, "n2"), null));
+      if (n2.TAG === "Ok") {
+        return {
+                TAG: "Ok",
+                _0: {
+                  o: o._0,
+                  n: n._0,
+                  n2: n2._0
+                }
+              };
+      }
+      var e = n2._0;
+      return {
+              TAG: "Error",
+              _0: {
+                path: ".n2" + e.path,
+                message: e.message,
+                value: e.value
+              }
+            };
+    }
+    var e$1 = n._0;
+    return {
+            TAG: "Error",
+            _0: {
+              path: ".n" + e$1.path,
+              message: e$1.message,
+              value: e$1.value
+            }
+          };
+  }
+  var e$2 = o._0;
+  return {
+          TAG: "Error",
+          _0: {
+            path: ".o" + e$2.path,
+            message: e$2.message,
+            value: e$2.value
+          }
+        };
+}
+
 export {
   t_encode ,
   t_decode ,
@@ -566,5 +651,7 @@ export {
   t6_string_int_decode ,
   t7_encode ,
   t7_decode ,
+  withNull_encode ,
+  withNull_decode ,
 }
 /* t5_string_encode Not a pure module */

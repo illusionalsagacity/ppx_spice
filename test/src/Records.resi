@@ -55,3 +55,10 @@ type t7<'a> = {
   d: Js.Dict.t<'a>,
   r: Belt.Result.t<'a, string>,
 }
+
+@spice
+type withNull = {
+  o: option<string>,
+  n: Js.Null.t<string>,
+  n2: Js.null<int>,
+}

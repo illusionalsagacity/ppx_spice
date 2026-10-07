@@ -177,3 +177,29 @@ zoraBlock("generic record with multiple type parameters", t => {
   let decoded = sampleJson->Records.t6_string_int_decode
   t->testEqual(`decode`, decoded, Ok(sampleRecord))
 })
+
+zoraBlock("record with Js.Null.t", t => {
+  let empty: Records.withNull = {o: None, n: Js.Null.Null, n2: Js.Null.Null}
+  let emptyJson = Js.Json.object_(
+    Js.Dict.fromArray([("o", Js.Json.null), ("n", Js.Json.null), ("n2", Js.Json.null)]),
+  )
+  // None keeps encoding as null, matching 0.2.1
+  t->testEqual(`encode None and Null as null`, empty->Records.withNull_encode, emptyJson)
+  t->testEqual(`decode null`, emptyJson->Records.withNull_decode, Ok(empty))
+  t->testEqual(
+    `decode missing keys`,
+    Js.Json.object_(Js.Dict.empty())->Records.withNull_decode,
+    Ok(empty),
+  )
+
+  let full: Records.withNull = {o: Some("o"), n: Js.Null.Value("n"), n2: Js.Null.Value(2)}
+  let fullJson = Js.Json.object_(
+    Js.Dict.fromArray([
+      ("o", Js.Json.string("o")),
+      ("n", Js.Json.string("n")),
+      ("n2", Js.Json.number(2.)),
+    ]),
+  )
+  t->testEqual(`encode values`, full->Records.withNull_encode, fullJson)
+  t->testEqual(`decode values`, fullJson->Records.withNull_decode, Ok(full))
+})

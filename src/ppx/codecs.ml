@@ -56,6 +56,11 @@ and generate_constr_codecs { do_encode; do_decode }
   | Lident "option" ->
       ( (if do_encode then Some [%expr Spice.optionToJson] else None),
         if do_decode then Some [%expr Spice.optionFromJson] else None )
+  | Ldot (Lident "Js", "null")
+  | Ldot (Ldot (Lident "Js", "Null"), "t")
+  | Ldot (Lident "Null", "t") ->
+      ( (if do_encode then Some [%expr Spice.nullToJson] else None),
+        if do_decode then Some [%expr Spice.nullFromJson] else None )
   | Ldot (Ldot (Lident "Belt", "Result"), "t") ->
       ( (if do_encode then Some [%expr Spice.resultToJson] else None),
         if do_decode then Some [%expr Spice.resultFromJson] else None )

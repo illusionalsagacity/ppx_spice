@@ -121,6 +121,18 @@ let optionFromJson = (decoder, json) =>
   | _ => Belt.Result.map(decoder(json), v => Some(v))
   }
 
+let nullToJson = (encoder, value): Js.Json.t =>
+  switch value {
+  | Js.Null.Value(x) => encoder(x)
+  | Null => Js.Json.Null
+  }
+
+let nullFromJson = (decoder, json) =>
+  switch (json: Js.Json.t) {
+  | Js.Json.Null => Ok(Js.Null.Null)
+  | _ => Belt.Result.map(decoder(json), v => Js.Null.Value(v))
+  }
+
 let resultToJson = (okEncoder, errorEncoder, result): Js.Json.t => Js.Json.Array(
   switch result {
   | Ok(v) => [Js.Json.String("Ok"), okEncoder(v)]

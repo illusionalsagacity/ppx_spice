@@ -224,9 +224,10 @@ match get_attribute_by_name attributes "spice.key" with
 ## CI/CD
 
 GitHub Actions workflows are in `.github/workflows/`:
-- `build_linux.yml` - Linux build with Alpine container
-- `build_macos.yml` - macOS build
-- `build_windows.yml` - Windows build
-- `publish.yml` - NPM package publishing
+- `build.yml` - Builds the PPX for Linux (x64, arm64), macOS (x64, arm64) and Windows (x64).
+  Manually dispatchable, and reused by `publish.yml`.
+- `publish.yml` - Builds via `build.yml`, then publishes the NPM package and GitHub release
 
-Builds use OCaml 4.14.2 with static linking for portable binaries.
+Builds use OCaml 4.14.2. Linux binaries are statically linked against musl in Alpine for
+portability. Each build verifies the binary architecture, and `postInstall.js` / `ppx` select
+the binary by `process.platform` / `process.arch`.

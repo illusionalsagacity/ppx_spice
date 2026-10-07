@@ -3,6 +3,7 @@
 # 0.3.5 (unreleased)
 
 - Fixes [#105](https://github.com/green-labs/ppx_spice/issues/105) Arity of generated codecs was incorrect, causing a type error when called.
+- Ship native binaries for Linux arm64, and build the macOS x64 binary on an Intel runner (it was previously built on Apple Silicon). Binaries are now `ppx-linux-x64.exe`, `ppx-linux-arm64.exe`, `ppx-osx-x64.exe`, `ppx-osx-arm64.exe` and `ppx-windows.exe`.
 
 # 0.3.4
 

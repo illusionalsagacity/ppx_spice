@@ -177,6 +177,87 @@ function tOp_decode(v) {
         };
 }
 
+function inner_decode(v) {
+  if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  if (!(typeof v === "object" && !Array.isArray(v))) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  var value = Spice.intFromJson(Belt_Option.getWithDefault(Js_dict.get(v, "value"), null));
+  if (value.TAG === "Ok") {
+    return {
+            TAG: "Ok",
+            _0: {
+              value: value._0
+            }
+          };
+  }
+  var e = value._0;
+  return {
+          TAG: "Error",
+          _0: {
+            path: ".value" + e.path,
+            message: e.message,
+            value: e.value
+          }
+        };
+}
+
+function outer_decode(v) {
+  if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  if (!(typeof v === "object" && !Array.isArray(v))) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  var one = inner_decode(Belt_Option.getWithDefault(Js_dict.get(v, "one"), null));
+  if (one.TAG === "Ok") {
+    return {
+            TAG: "Ok",
+            _0: {
+              one: one._0
+            }
+          };
+  }
+  var e = one._0;
+  return {
+          TAG: "Error",
+          _0: {
+            path: ".one" + e.path,
+            message: e.message,
+            value: e.value
+          }
+        };
+}
+
+function deeplyNested_decode(v) {
+  if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  if (!(typeof v === "object" && !Array.isArray(v))) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  var level1 = outer_decode(Belt_Option.getWithDefault(Js_dict.get(v, "level1"), null));
+  if (level1.TAG === "Ok") {
+    return {
+            TAG: "Ok",
+            _0: {
+              level1: level1._0
+            }
+          };
+  }
+  var e = level1._0;
+  return {
+          TAG: "Error",
+          _0: {
+            path: ".level1" + e.path,
+            message: e.message,
+            value: e.value
+          }
+        };
+}
+
 export {
   t_encode ,
   t_decode ,
@@ -184,5 +265,8 @@ export {
   t1_decode ,
   tOp_encode ,
   tOp_decode ,
+  inner_decode ,
+  outer_decode ,
+  deeplyNested_decode ,
 }
 /* No side effect */

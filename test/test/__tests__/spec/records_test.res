@@ -88,3 +88,43 @@ zoraBlock("record with optional field", t => {
   // let decoded = sampleJson3->Records.tOp_decode
   // t->testEqual(`decode omit optional field with None field`, decoded, Ok(sampleRecord3))
 })
+
+zoraBlock("nested record error path", t => {
+  // When inner.value fails to decode, the path should be ".one.value" not just ".value"
+  let invalidJson = Js.Json.object_(
+    Js.Dict.fromArray([
+      ("one", Js.Json.object_(Js.Dict.fromArray([("value", Js.Json.string("not an int"))]))),
+    ]),
+  )
+
+  let decoded = invalidJson->Records.outer_decode
+  t->test("error path includes full nested path", async t => {
+    switch decoded {
+    | Error({path}) => t->equal(path, ".one.value", "path should be .one.value")
+    | Ok(_) => t->fail("expected decode to fail")
+    }
+  })
+})
+
+zoraBlock("deeply nested record error path", t => {
+  let invalidJson = Js.Json.object_(
+    Js.Dict.fromArray([
+      (
+        "level1",
+        Js.Json.object_(
+          Js.Dict.fromArray([
+            ("one", Js.Json.object_(Js.Dict.fromArray([("value", Js.Json.string("not an int"))]))),
+          ]),
+        ),
+      ),
+    ]),
+  )
+
+  let decoded = invalidJson->Records.deeplyNested_decode
+  t->test("error path includes deeply nested path", async t => {
+    switch decoded {
+    | Error({path}) => t->equal(path, ".level1.one.value", "path should be .level1.one.value")
+    | Ok(_) => t->fail("expected decode to fail")
+    }
+  })
+})

@@ -126,6 +126,62 @@ function t2_decode(v) {
   }
 }
 
+function withArgs_decode(v) {
+  var json_arr = Js_json.classify(v);
+  if (typeof json_arr !== "object") {
+    return Spice.error(undefined, "Not a polyvariant", v);
+  }
+  if (json_arr.TAG !== "JSONArray") {
+    return Spice.error(undefined, "Not a polyvariant", v);
+  }
+  var json_arr$1 = json_arr._0;
+  if (json_arr$1.length === 0) {
+    return Spice.error(undefined, "Expected polyvariant, found empty array", v);
+  }
+  var tagged = Js_array.map(Js_json.classify, json_arr$1);
+  var match = Belt_Array.getExn(tagged, 0);
+  if (typeof match === "object" && match.TAG === "JSONString" && match._0 === "WithArgs") {
+    if (tagged.length !== 3) {
+      return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
+    }
+    var match$1 = Spice.intFromJson(Belt_Array.getExn(json_arr$1, 1));
+    var match$2 = Spice.stringFromJson(Belt_Array.getExn(json_arr$1, 2));
+    if (match$1.TAG === "Ok") {
+      if (match$2.TAG === "Ok") {
+        return {
+                TAG: "Ok",
+                _0: {
+                  NAME: "WithArgs",
+                  VAL: [
+                    match$1._0,
+                    match$2._0
+                  ]
+                }
+              };
+      }
+      var e = match$2._0;
+      return {
+              TAG: "Error",
+              _0: {
+                path: "[2]" + e.path,
+                message: e.message,
+                value: e.value
+              }
+            };
+    }
+    var e$1 = match$1._0;
+    return {
+            TAG: "Error",
+            _0: {
+              path: "[1]" + e$1.path,
+              message: e$1.message,
+              value: e$1.value
+            }
+          };
+  }
+  return Spice.error(undefined, "Invalid polymorphic constructor", Belt_Array.getExn(json_arr$1, 0));
+}
+
 export {
   t_encode ,
   t_decode ,
@@ -133,5 +189,6 @@ export {
   t1_decode ,
   t2_encode ,
   t2_decode ,
+  withArgs_decode ,
 }
 /* No side effect */

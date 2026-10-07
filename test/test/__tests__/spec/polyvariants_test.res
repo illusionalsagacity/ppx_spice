@@ -46,3 +46,21 @@ zoraBlock("polymorphic variants with @spice.as number", t => {
   let polyvariantDecoded = Js.Json.number(2.0)->Polyvariants.t2_decode
   t->testEqual("decode 2.0", polyvariantDecoded, Ok(#two))
 })
+
+zoraBlock("polyvariant error path includes correct index", t => {
+  // Polyvariant with args: ["WithArgs", int, string]
+  // Index 0 is the constructor name, so the first argument is at index 1
+  let invalidJson = Js.Json.array([
+    Js.Json.string("WithArgs"),
+    Js.Json.string("not an int"),
+    Js.Json.string("valid string"),
+  ])
+
+  let decoded = invalidJson->Polyvariants.withArgs_decode
+  t->test("error path shows [1] for first argument", async t => {
+    switch decoded {
+    | Error({path}) => t->equal(path, "[1]", "path should be [1]")
+    | Ok(_) => t->fail("expected decode to fail")
+    }
+  })
+})

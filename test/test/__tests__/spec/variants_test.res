@@ -62,3 +62,21 @@ zoraBlock("variants with @spice.as number", t => {
   let variantDecoded = Js.Json.number(2.0)->Variants.t4_decode
   t->testEqual(`decode 2.0`, variantDecoded, Ok(Variants.Two))
 })
+
+zoraBlock("variant error path includes correct index", t => {
+  // Variant with args: ["WithArgs", int, string]
+  // Index 0 is the constructor name, so the first argument is at index 1
+  let invalidJson = Js.Json.array([
+    Js.Json.string("WithArgs"),
+    Js.Json.string("not an int"),
+    Js.Json.string("valid string"),
+  ])
+
+  let decoded = invalidJson->Variants.withArgs_decode
+  t->test("error path shows [1] for first argument", async t => {
+    switch decoded {
+    | Error({path}) => t->equal(path, "[1]", "path should be [1]")
+    | Ok(_) => t->fail("expected decode to fail")
+    }
+  })
+})

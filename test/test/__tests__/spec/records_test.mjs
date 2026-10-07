@@ -110,6 +110,34 @@ Zora.test("deeply nested record error path", (function (t) {
               }));
       }));
 
+Zora.test("record with @spice.default", (function (t) {
+        var decoded = Records.withDefault_decode({});
+        testEqual(t, "missing fields use defaults", decoded, {
+              TAG: "Ok",
+              _0: {
+                a: 1,
+                b: 0
+              }
+            });
+        var decoded$1 = Records.withDefault_decode(Js_dict.fromArray([
+                  [
+                    "a",
+                    2
+                  ],
+                  [
+                    "b",
+                    3
+                  ]
+                ]));
+        testEqual(t, "present fields override defaults", decoded$1, {
+              TAG: "Ok",
+              _0: {
+                a: 2,
+                b: 3
+              }
+            });
+      }));
+
 export {
   testEqual ,
 }

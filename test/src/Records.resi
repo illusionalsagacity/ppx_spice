@@ -25,3 +25,9 @@ type outer = {one: inner}
 
 @spice.decode
 type deeplyNested = {level1: outer}
+
+@spice
+type withDefault = {
+  @spice.default(Some(1)) a: option<int>,
+  @spice.default(0) b: int,
+}

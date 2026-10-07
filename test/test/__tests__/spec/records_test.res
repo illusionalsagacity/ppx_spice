@@ -128,3 +128,14 @@ zoraBlock("deeply nested record error path", t => {
     }
   })
 })
+
+zoraBlock("record with @spice.default", t => {
+  let decoded = Js.Json.object_(Js.Dict.empty())->Records.withDefault_decode
+  t->testEqual(`missing fields use defaults`, decoded, Ok({Records.a: Some(1), b: 0}))
+
+  let decoded =
+    Js.Json.object_(
+      Js.Dict.fromArray([("a", Js.Json.number(2.)), ("b", Js.Json.number(3.))]),
+    )->Records.withDefault_decode
+  t->testEqual(`present fields override defaults`, decoded, Ok({Records.a: Some(2), b: 3}))
+})

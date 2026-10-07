@@ -258,6 +258,71 @@ function deeplyNested_decode(v) {
         };
 }
 
+function withDefault_encode(v) {
+  return Js_dict.fromArray(Spice.filterOptional([
+                  [
+                    "a",
+                    false,
+                    (function (extra) {
+                          return Spice.optionToJson(Spice.intToJson, extra);
+                        })(v.a)
+                  ],
+                  [
+                    "b",
+                    false,
+                    Spice.intToJson(v.b)
+                  ]
+                ]));
+}
+
+function withDefault_decode(v) {
+  if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  if (!(typeof v === "object" && !Array.isArray(v))) {
+    return Spice.error(undefined, "Not an object", v);
+  }
+  var a = Belt_Option.getWithDefault(Belt_Option.map(Js_dict.get(v, "a"), (function (extra) {
+              return Spice.optionFromJson(Spice.intFromJson, extra);
+            })), {
+        TAG: "Ok",
+        _0: 1
+      });
+  if (a.TAG === "Ok") {
+    var b = Belt_Option.getWithDefault(Belt_Option.map(Js_dict.get(v, "b"), Spice.intFromJson), {
+          TAG: "Ok",
+          _0: 0
+        });
+    if (b.TAG === "Ok") {
+      return {
+              TAG: "Ok",
+              _0: {
+                a: a._0,
+                b: b._0
+              }
+            };
+    }
+    var e = b._0;
+    return {
+            TAG: "Error",
+            _0: {
+              path: ".b" + e.path,
+              message: e.message,
+              value: e.value
+            }
+          };
+  }
+  var e$1 = a._0;
+  return {
+          TAG: "Error",
+          _0: {
+            path: ".a" + e$1.path,
+            message: e$1.message,
+            value: e$1.value
+          }
+        };
+}
+
 export {
   t_encode ,
   t_decode ,
@@ -268,5 +333,7 @@ export {
   inner_decode ,
   outer_decode ,
   deeplyNested_decode ,
+  withDefault_encode ,
+  withDefault_decode ,
 }
 /* No side effect */

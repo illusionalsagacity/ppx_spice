@@ -1,0 +1,162 @@
+name: ppx_spice build
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch or tag to build"
+        required: false
+      repository:
+        description: "owner/repo to check out (use fork to test external PRs)"
+        required: false
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+      repository:
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+env:
+  TARGET_REF: ${{ inputs.ref || github.ref }}
+  TARGET_REPO: ${{ inputs.repository || github.repository }}
+  OCAML_COMPILER: 4.14.2
+
+# Every job uploads a single artifact named after the file postInstall.js expects,
+# so the publish job can download them all straight into the package root.
+jobs:
+  build_linux:
+    name: Linux ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-latest
+            file_arch: "x86-64"
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            file_arch: "ARM aarch64"
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          ref: ${{ env.TARGET_REF }}
+          persist-credentials: false
+
+      # Statically link against musl in Alpine so the binary runs on any distro.
+      # JavaScript actions are not supported inside Alpine containers on arm64,
+      # so actions run on the host and only the build runs inside Alpine.
+      - name: Build static PPX in Alpine
+        run: |
+          docker run --rm --user root --entrypoint sh \
+            -v "${{ github.workspace }}:/work" -w /work/src \
+            ocaml/opam:alpine-3.16-ocaml-4.14 -ec '
+              opam init -a --disable-sandboxing --compiler=${{ env.OCAML_COMPILER }}
+              opam install . --deps-only --with-test -y
+              opam exec -- dune build --profile static
+              cp _build/default/bin/bin.exe ppx-linux-${{ matrix.arch }}.exe
+              chmod 755 ppx-linux-${{ matrix.arch }}.exe
+            '
+
+      - name: Verify binary architecture
+        working-directory: src
+        run: |
+          file ppx-linux-${{ matrix.arch }}.exe | tee /dev/stderr \
+            | grep -q "${{ matrix.file_arch }}.*statically linked"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ppx-linux-${{ matrix.arch }}
+          path: src/ppx-linux-${{ matrix.arch }}.exe
+          if-no-files-found: error
+
+  build_macos:
+    name: macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        working-directory: src
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macos-15 runners are Apple Silicon; Intel needs the explicit -intel label.
+          - arch: x64
+            runner: macos-15-intel
+            file_arch: x86_64
+          - arch: arm64
+            runner: macos-15
+            file_arch: arm64
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          ref: ${{ env.TARGET_REF }}
+          persist-credentials: false
+
+      - name: Use OCaml ${{ env.OCAML_COMPILER }}
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: ${{ env.OCAML_COMPILER }}
+
+      - name: Install deps
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build
+
+      - name: Copy built PPX file
+        run: cp ./_build/default/bin/bin.exe ppx-osx-${{ matrix.arch }}.exe
+
+      - name: Verify binary architecture
+        run: |
+          file ppx-osx-${{ matrix.arch }}.exe | tee /dev/stderr \
+            | grep -q "executable ${{ matrix.file_arch }}"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ppx-osx-${{ matrix.arch }}
+          path: src/ppx-osx-${{ matrix.arch }}.exe
+          if-no-files-found: error
+
+  build_windows:
+    name: Windows x64
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: src
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          ref: ${{ env.TARGET_REF }}
+          persist-credentials: false
+
+      - name: Use OCaml ${{ env.OCAML_COMPILER }}
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: ${{ env.OCAML_COMPILER }}
+
+      - name: Install deps
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build
+
+      - name: Copy built PPX file
+        run: cp ./_build/default/bin/bin.exe ppx-windows.exe
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ppx-windows
+          path: src/ppx-windows.exe
+          if-no-files-found: error

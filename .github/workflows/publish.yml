@@ -1,162 +1,92 @@
 name: ppx_spice publish
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch or tag to build and publish from"
+        required: false
+      repository:
+        description: "owner/repo to check out (use fork to test external PRs)"
+        required: false
+      npm_tag:
+        description: "npm dist-tag to publish under (e.g., latest, next)"
+        required: false
+        default: rescript-11
+
+env:
+  TARGET_REF: ${{ github.event.inputs.ref || github.ref }}
+  TARGET_REPO: ${{ github.event.inputs.repository || github.repository }}
+  NPM_TAG: ${{ github.event.inputs.npm_tag || 'rescript-11' }}
+
+permissions:
+  contents: read
 
 jobs:
-  build_linux:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: src
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        ocaml-compiler:
-          - 4.12.1
-    container:
-      image: ocaml/opam:alpine-3.16-ocaml-4.12
-      options: --user root
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Opam init
-        run: opam init -a --disable-sandboxing --compiler=4.12.1
-
-      - name: Install deps
-        run: opam install . --deps-only --with-test
-
-      - name: Build
-        run: opam exec -- dune build --profile static
-
-      - name: Copy built PPX file
-        run: |
-          mv ./_build/default/bin/bin.exe ppx.exe
-
-      - name: (only on release) Upload artifacts ${{ matrix.os }}
-        uses: actions/upload-artifact@master
-        with:
-          name: ${{ matrix.os }}
-          path: src/ppx.exe
-          if-no-files-found: error
-
-  build_macos:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: src
-    strategy:
-      matrix:
-        os: [macOS-latest]
-        ocaml-compiler:
-          - 4.12.1
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Use OCaml ${{ matrix.ocaml-compiler}}
-        uses: ocaml/setup-ocaml@v2
-        with:
-          ocaml-compiler: ${{ matrix.ocaml-compiler }}
-
-      - name: Install deps
-        run: opam install . --deps-only --with-test
-
-      - name: Build
-        run: opam exec -- dune build
-
-      - name: Copy built PPX file
-        run: |
-          mv ./_build/default/bin/bin.exe ppx.exe
-
-      - name: (only on release) Upload artifacts ${{ matrix.os }}
-        uses: actions/upload-artifact@master
-        with:
-          name: ${{ matrix.os }}
-          path: src/ppx.exe
-          if-no-files-found: error
-
-  build_windows:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: src
-    strategy:
-      matrix:
-        os: [windows-latest]
-        ocaml-compiler:
-          - 4.12.1
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Use OCaml ${{ matrix.ocaml-compiler}}
-        uses: ocaml/setup-ocaml@v2
-        with:
-          ocaml-compiler: ${{ matrix.ocaml-compiler }}
-
-      - name: Install deps
-        run: opam install . --deps-only --with-test
-
-      - name: Build
-        run: opam exec -- dune build
-
-      - name: Copy built PPX file
-        run: |
-          mv ./_build/default/bin/bin.exe ppx.exe
-
-      - name: (only on release) Upload artifacts ${{ matrix.os }}
-        uses: actions/upload-artifact@master
-        with:
-          name: ${{ matrix.os }}
-          path: src/ppx.exe
-          if-no-files-found: error
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: ${{ github.event.inputs.ref }}
+      repository: ${{ github.event.inputs.repository }}
 
   publish:
-    needs: [build_linux, build_macos, build_windows]
-    name: (only on release) Publish
+    needs: build
+    name: Publish
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for OIDC publish to npm
+      contents: write # Required for creating GitHub releases
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v6
         with:
-          node-version: 16
+          repository: ${{ env.TARGET_REPO }}
+          ref: ${{ env.TARGET_REF }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
           registry-url: "https://registry.npmjs.org"
 
-      - name: Download linux artifacts
-        if: success()
-        uses: actions/download-artifact@master
+      - name: Download PPX binaries
+        uses: actions/download-artifact@v7
         with:
-          name: ubuntu-latest
-          path: binaries/linux
+          pattern: ppx-*
+          merge-multiple: true
+          path: .
 
-      - name: Download macOS artifacts
-        if: success()
-        uses: actions/download-artifact@master
-        with:
-          name: macOS-latest
-          path: binaries/darwin
-
-      - name: Download windows artifacts
-        if: success()
-        uses: actions/download-artifact@master
-        with:
-          name: windows-latest
-          path: binaries/windows
-
-      - name: Move artifacts
-        if: success()
+      - name: Check all binaries are present
         run: |
-          mkdir -p bin
-          mv binaries/linux/ppx.exe ppx-linux.exe
-          mv binaries/darwin/ppx.exe ppx-osx.exe
-          mv binaries/windows/ppx.exe ppx-windows.exe
+          ls -l ppx-*.exe
+          for f in ppx-linux-x64.exe ppx-linux-arm64.exe ppx-osx-x64.exe ppx-osx-arm64.exe ppx-windows.exe; do
+            test -f "$f" || { echo "::error::missing $f"; exit 1; }
+          done
+
+      # Artifacts lose their executable bit on upload
+      - name: Set executable permissions
+        run: chmod +x ppx-linux-x64.exe ppx-linux-arm64.exe ppx-osx-x64.exe ppx-osx-arm64.exe
+
+      - name: Pack package
+        run: npm pack
 
       - name: Publish
-        if: success()
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: |
+          if [ "${NPM_TAG:-latest}" = "latest" ]; then
+            npm publish --provenance
+          else
+            npm publish --provenance --tag "${NPM_TAG}"
+          fi
+
+      - name: Create GitHub Release
+        if: startsWith(env.TARGET_REF, 'refs/tags/') || startsWith(env.TARGET_REF, 'v')
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ env.TARGET_REF }}
+          name: Release ${{ env.TARGET_REF }}
+          generate_release_notes: true
+          files: |
+            ppx-linux-x64.exe
+            ppx-linux-arm64.exe
+            ppx-osx-x64.exe
+            ppx-osx-arm64.exe
+            ppx-windows.exe

@@ -1,0 +1,78 @@
+name: ppx_spice test
+
+on:
+  pull_request:
+    branches:
+      - rescript-11
+  push:
+    branches:
+      - rescript-11
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (ReScript ${{ matrix.rescript }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 11.0.1 is the version in test/pnpm-lock.yaml; 11.1.4 is the latest 11.x
+        rescript: ["11.0.1", "11.1.4"]
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Use OCaml 4.14.2
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 4.14.2
+
+      - name: Install OCaml deps
+        run: opam install . --deps-only --with-test
+        working-directory: src
+
+      - name: Build PPX
+        run: opam exec -- dune build
+        working-directory: src
+
+      # test/pnpm-lock.yaml is lockfile v6, which pnpm 9+ won't install frozen
+      - name: Use pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.9
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: test/pnpm-lock.yaml
+
+      - name: Install JS deps
+        run: pnpm install --frozen-lockfile
+        working-directory: test
+
+      - name: Use ReScript ${{ matrix.rescript }}
+        run: |
+          locked=$(node -p 'require("rescript/package.json").version')
+          if [ "$locked" != "${{ matrix.rescript }}" ]; then
+            pnpm add --save-dev --save-exact "rescript@${{ matrix.rescript }}"
+          fi
+          node -p '"rescript " + require("rescript/package.json").version'
+        working-directory: test
+
+      - name: Build ReScript test fixtures
+        run: pnpm run res:clean && pnpm run res:build
+        working-directory: test
+
+      - name: Check generated output is committed
+        run: git diff --exit-code -- '*.mjs'
+
+      - name: Run tests
+        run: pnpm test
+        working-directory: test

@@ -33,12 +33,36 @@ const installWindowsBinary = () => {
   }
 };
 
+const unsupported = () => {
+  console.warn(`No release available for "${process.platform}-${process.arch}"`);
+  process.exit(1);
+};
+
 switch (process.platform) {
   case "linux":
-    installMacLinuxBinary("ppx-linux.exe");
+    switch (process.arch) {
+      case "x64":
+        installMacLinuxBinary("ppx-linux-x64.exe");
+        break;
+      case "arm64":
+        installMacLinuxBinary("ppx-linux-arm64.exe");
+        break;
+      default:
+        unsupported();
+    }
     break;
   case "darwin":
-    installMacLinuxBinary("ppx-osx.exe");
+    // Detect macOS architecture: arm64 for Apple Silicon, x64 for Intel
+    switch (process.arch) {
+      case "x64":
+        installMacLinuxBinary("ppx-osx-x64.exe");
+        break;
+      case "arm64":
+        installMacLinuxBinary("ppx-osx-arm64.exe");
+        break;
+      default:
+        unsupported();
+    }
     break;
   case "win32":
     installWindowsBinary();
@@ -46,6 +70,5 @@ switch (process.platform) {
   default:
     // This won't break the installation because the `ppx` shell script remains
     // but that script will throw an error in this case anyway
-    console.warn(`No release available for "${process.platform}"`);
-    process.exit(1);
+    unsupported();
 }

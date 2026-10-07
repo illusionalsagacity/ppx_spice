@@ -4,3 +4,4 @@ include Optional_field_records_test
 include Polyvariants_test
 include Records_test
 include Variants_test
+include Options_test

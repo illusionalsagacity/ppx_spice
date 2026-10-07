@@ -76,6 +76,103 @@ Zora.test("polyvariant error path includes correct index", (function (t) {
               }));
       }));
 
+Zora.test("generic polyvariant with single type parameter", (function (t) {
+        var someEncoded = Polyvariants.t3_string_encode({
+              NAME: "Some",
+              VAL: "hello"
+            });
+        testEqual(t, "encode #Some(\"hello\")", someEncoded, [
+              "Some",
+              "hello"
+            ]);
+        var noneEncoded = Polyvariants.t3_string_encode("None");
+        testEqual(t, "encode #None", noneEncoded, ["None"]);
+        var someDecoded = Polyvariants.t3_string_decode([
+              "Some",
+              "hello"
+            ]);
+        testEqual(t, "decode #Some", someDecoded, {
+              TAG: "Ok",
+              _0: {
+                NAME: "Some",
+                VAL: "hello"
+              }
+            });
+        var noneDecoded = Polyvariants.t3_string_decode(["None"]);
+        testEqual(t, "decode #None", noneDecoded, {
+              TAG: "Ok",
+              _0: "None"
+            });
+      }));
+
+Zora.test("generic polyvariant with multiple type parameters", (function (t) {
+        var leftEncoded = Polyvariants.t4_string_int_encode({
+              NAME: "Left",
+              VAL: "hello"
+            });
+        testEqual(t, "encode #Left(\"hello\")", leftEncoded, [
+              "Left",
+              "hello"
+            ]);
+        var rightEncoded = Polyvariants.t4_string_int_encode({
+              NAME: "Right",
+              VAL: 42
+            });
+        testEqual(t, "encode #Right(42)", rightEncoded, [
+              "Right",
+              42.0
+            ]);
+        var bothEncoded = Polyvariants.t4_string_int_encode({
+              NAME: "Both",
+              VAL: [
+                "hello",
+                42
+              ]
+            });
+        testEqual(t, "encode #Both(\"hello\", 42)", bothEncoded, [
+              "Both",
+              "hello",
+              42.0
+            ]);
+        var leftDecoded = Polyvariants.t4_string_int_decode([
+              "Left",
+              "hello"
+            ]);
+        testEqual(t, "decode #Left", leftDecoded, {
+              TAG: "Ok",
+              _0: {
+                NAME: "Left",
+                VAL: "hello"
+              }
+            });
+        var rightDecoded = Polyvariants.t4_string_int_decode([
+              "Right",
+              42.0
+            ]);
+        testEqual(t, "decode #Right", rightDecoded, {
+              TAG: "Ok",
+              _0: {
+                NAME: "Right",
+                VAL: 42
+              }
+            });
+        var bothDecoded = Polyvariants.t4_string_int_decode([
+              "Both",
+              "hello",
+              42.0
+            ]);
+        testEqual(t, "decode #Both", bothDecoded, {
+              TAG: "Ok",
+              _0: {
+                NAME: "Both",
+                VAL: [
+                  "hello",
+                  42
+                ]
+              }
+            });
+      }));
+
 export {
   testEqual ,
 }

@@ -182,6 +182,218 @@ function withArgs_decode(v) {
   return Spice.error(undefined, "Invalid polymorphic constructor", Belt_Array.getExn(json_arr$1, 0));
 }
 
+function t3_encode(encoder_a) {
+  return function (v) {
+    if (typeof v === "object") {
+      return [
+              "Some",
+              encoder_a(v.VAL)
+            ];
+    } else {
+      return ["None"];
+    }
+  };
+}
+
+function t3_decode(decoder_a) {
+  return function (v) {
+    var json_arr = Js_json.classify(v);
+    if (typeof json_arr !== "object") {
+      return Spice.error(undefined, "Not a polyvariant", v);
+    }
+    if (json_arr.TAG !== "JSONArray") {
+      return Spice.error(undefined, "Not a polyvariant", v);
+    }
+    var json_arr$1 = json_arr._0;
+    if (json_arr$1.length === 0) {
+      return Spice.error(undefined, "Expected polyvariant, found empty array", v);
+    }
+    var tagged = Js_array.map(Js_json.classify, json_arr$1);
+    var match = Belt_Array.getExn(tagged, 0);
+    if (typeof match === "object" && match.TAG === "JSONString") {
+      switch (match._0) {
+        case "None" :
+            if (tagged.length !== 1) {
+              return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
+            } else {
+              return {
+                      TAG: "Ok",
+                      _0: "None"
+                    };
+            }
+        case "Some" :
+            if (tagged.length !== 2) {
+              return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
+            }
+            var v0 = decoder_a(Belt_Array.getExn(json_arr$1, 1));
+            if (v0.TAG === "Ok") {
+              return {
+                      TAG: "Ok",
+                      _0: {
+                        NAME: "Some",
+                        VAL: v0._0
+                      }
+                    };
+            }
+            var e = v0._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e.path,
+                      message: e.message,
+                      value: e.value
+                    }
+                  };
+        default:
+          
+      }
+    }
+    return Spice.error(undefined, "Invalid polymorphic constructor", Belt_Array.getExn(json_arr$1, 0));
+  };
+}
+
+var t3_string_encode = t3_encode(Spice.stringToJson);
+
+var t3_string_decode = t3_decode(Spice.stringFromJson);
+
+function t4_encode(encoder_a, encoder_b) {
+  return function (v) {
+    var variant = v.NAME;
+    if (variant !== "Both") {
+      if (variant === "Left") {
+        return [
+                "Left",
+                encoder_a(v.VAL)
+              ];
+      } else {
+        return [
+                "Right",
+                encoder_b(v.VAL)
+              ];
+      }
+    }
+    var match = v.VAL;
+    return [
+            "Both",
+            encoder_a(match[0]),
+            encoder_b(match[1])
+          ];
+  };
+}
+
+function t4_decode(decoder_a, decoder_b) {
+  return function (v) {
+    var json_arr = Js_json.classify(v);
+    if (typeof json_arr !== "object") {
+      return Spice.error(undefined, "Not a polyvariant", v);
+    }
+    if (json_arr.TAG !== "JSONArray") {
+      return Spice.error(undefined, "Not a polyvariant", v);
+    }
+    var json_arr$1 = json_arr._0;
+    if (json_arr$1.length === 0) {
+      return Spice.error(undefined, "Expected polyvariant, found empty array", v);
+    }
+    var tagged = Js_array.map(Js_json.classify, json_arr$1);
+    var match = Belt_Array.getExn(tagged, 0);
+    if (typeof match === "object" && match.TAG === "JSONString") {
+      switch (match._0) {
+        case "Both" :
+            if (tagged.length !== 3) {
+              return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
+            }
+            var match$1 = decoder_a(Belt_Array.getExn(json_arr$1, 1));
+            var match$2 = decoder_b(Belt_Array.getExn(json_arr$1, 2));
+            if (match$1.TAG === "Ok") {
+              if (match$2.TAG === "Ok") {
+                return {
+                        TAG: "Ok",
+                        _0: {
+                          NAME: "Both",
+                          VAL: [
+                            match$1._0,
+                            match$2._0
+                          ]
+                        }
+                      };
+              }
+              var e = match$2._0;
+              return {
+                      TAG: "Error",
+                      _0: {
+                        path: "[2]" + e.path,
+                        message: e.message,
+                        value: e.value
+                      }
+                    };
+            }
+            var e$1 = match$1._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e$1.path,
+                      message: e$1.message,
+                      value: e$1.value
+                    }
+                  };
+        case "Left" :
+            if (tagged.length !== 2) {
+              return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
+            }
+            var v0 = decoder_a(Belt_Array.getExn(json_arr$1, 1));
+            if (v0.TAG === "Ok") {
+              return {
+                      TAG: "Ok",
+                      _0: {
+                        NAME: "Left",
+                        VAL: v0._0
+                      }
+                    };
+            }
+            var e$2 = v0._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e$2.path,
+                      message: e$2.message,
+                      value: e$2.value
+                    }
+                  };
+        case "Right" :
+            if (tagged.length !== 2) {
+              return Spice.error(undefined, "Invalid number of arguments to polyvariant constructor", v);
+            }
+            var v0$1 = decoder_b(Belt_Array.getExn(json_arr$1, 1));
+            if (v0$1.TAG === "Ok") {
+              return {
+                      TAG: "Ok",
+                      _0: {
+                        NAME: "Right",
+                        VAL: v0$1._0
+                      }
+                    };
+            }
+            var e$3 = v0$1._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e$3.path,
+                      message: e$3.message,
+                      value: e$3.value
+                    }
+                  };
+        default:
+          
+      }
+    }
+    return Spice.error(undefined, "Invalid polymorphic constructor", Belt_Array.getExn(json_arr$1, 0));
+  };
+}
+
+var t4_string_int_encode = t4_encode(Spice.stringToJson, Spice.intToJson);
+
+var t4_string_int_decode = t4_decode(Spice.stringFromJson, Spice.intFromJson);
+
 export {
   t_encode ,
   t_decode ,
@@ -190,5 +402,13 @@ export {
   t2_encode ,
   t2_decode ,
   withArgs_decode ,
+  t3_encode ,
+  t3_decode ,
+  t3_string_encode ,
+  t3_string_decode ,
+  t4_encode ,
+  t4_decode ,
+  t4_string_int_encode ,
+  t4_string_int_decode ,
 }
-/* No side effect */
+/* t3_string_encode Not a pure module */

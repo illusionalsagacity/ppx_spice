@@ -46,6 +46,30 @@ type deeplyNested = {level1: outer}
 
 @spice
 type withDefault = {
-  @spice.default(Some(1)) a: option<int>,
-  @spice.default(0) b: int,
+  @spice.default(Some(1)) opt: option<int>,
+  @spice.default(0) num: int,
+}
+
+@spice
+type t5<'data> = {a: array<'data>}
+
+let t5_string_encode = t5_encode(Spice.stringToJson)
+let t5_string_decode = t5_decode(Spice.stringFromJson)
+
+@spice
+type t6<'key, 'value> = {
+  key: 'key,
+  value: 'value,
+}
+
+let t6_string_int_encode = t6_encode(Spice.stringToJson, Spice.intToJson)
+let t6_string_int_decode = t6_decode(Spice.stringFromJson, Spice.intFromJson)
+
+// Generic record using every container codec; the .resi match checks codec arity
+@spice
+type t7<'a> = {
+  l: list<'a>,
+  o: option<'a>,
+  d: Js.Dict.t<'a>,
+  r: Belt.Result.t<'a, string>,
 }

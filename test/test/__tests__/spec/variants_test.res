@@ -80,3 +80,61 @@ zoraBlock("variant error path includes correct index", t => {
     }
   })
 })
+
+zoraBlock("generic variant with single type parameter", t => {
+  let someEncoded = Variants.Some("hello")->Variants.t5_string_encode
+  t->testEqual(
+    `encode Some("hello")`,
+    someEncoded,
+    Js.Json.array([Js.Json.string("Some"), Js.Json.string("hello")]),
+  )
+
+  let noneEncoded = Variants.None->Variants.t5_string_encode
+  t->testEqual(`encode None`, noneEncoded, Js.Json.array([Js.Json.string("None")]))
+
+  let someDecoded =
+    Js.Json.array([Js.Json.string("Some"), Js.Json.string("hello")])->Variants.t5_string_decode
+  t->testEqual(`decode Some`, someDecoded, Ok(Variants.Some("hello")))
+
+  let noneDecoded = Js.Json.array([Js.Json.string("None")])->Variants.t5_string_decode
+  t->testEqual(`decode None`, noneDecoded, Ok(Variants.None))
+})
+
+zoraBlock("generic variant with multiple type parameters", t => {
+  let leftEncoded = Variants.Left("hello")->Variants.t6_string_int_encode
+  t->testEqual(
+    `encode Left("hello")`,
+    leftEncoded,
+    Js.Json.array([Js.Json.string("Left"), Js.Json.string("hello")]),
+  )
+
+  let rightEncoded = Variants.Right(42)->Variants.t6_string_int_encode
+  t->testEqual(
+    `encode Right(42)`,
+    rightEncoded,
+    Js.Json.array([Js.Json.string("Right"), Js.Json.number(42.0)]),
+  )
+
+  let bothEncoded = Variants.Both("hello", 42)->Variants.t6_string_int_encode
+  t->testEqual(
+    `encode Both("hello", 42)`,
+    bothEncoded,
+    Js.Json.array([Js.Json.string("Both"), Js.Json.string("hello"), Js.Json.number(42.0)]),
+  )
+
+  let leftDecoded =
+    Js.Json.array([Js.Json.string("Left"), Js.Json.string("hello")])->Variants.t6_string_int_decode
+  t->testEqual(`decode Left`, leftDecoded, Ok(Variants.Left("hello")))
+
+  let rightDecoded =
+    Js.Json.array([Js.Json.string("Right"), Js.Json.number(42.0)])->Variants.t6_string_int_decode
+  t->testEqual(`decode Right`, rightDecoded, Ok(Variants.Right(42)))
+
+  let bothDecoded =
+    Js.Json.array([
+      Js.Json.string("Both"),
+      Js.Json.string("hello"),
+      Js.Json.number(42.0),
+    ])->Variants.t6_string_int_decode
+  t->testEqual(`decode Both`, bothDecoded, Ok(Variants.Both("hello", 42)))
+})

@@ -115,26 +115,75 @@ Zora.test("record with @spice.default", (function (t) {
         testEqual(t, "missing fields use defaults", decoded, {
               TAG: "Ok",
               _0: {
-                a: 1,
-                b: 0
+                opt: 1,
+                num: 0
               }
             });
         var decoded$1 = Records.withDefault_decode(Js_dict.fromArray([
                   [
-                    "a",
+                    "opt",
                     2
                   ],
                   [
-                    "b",
+                    "num",
                     3
                   ]
                 ]));
         testEqual(t, "present fields override defaults", decoded$1, {
               TAG: "Ok",
               _0: {
-                a: 2,
-                b: 3
+                opt: 2,
+                num: 3
               }
+            });
+      }));
+
+Zora.test("generic record with single type parameter", (function (t) {
+        var sampleJson = Js_dict.fromArray([[
+                "a",
+                [
+                  "one",
+                  "two",
+                  "three"
+                ]
+              ]]);
+        var sampleRecord = {
+          a: [
+            "one",
+            "two",
+            "three"
+          ]
+        };
+        var encoded = Records.t5_string_encode(sampleRecord);
+        testEqual(t, "encode", encoded, sampleJson);
+        var decoded = Records.t5_string_decode(sampleJson);
+        testEqual(t, "decode", decoded, {
+              TAG: "Ok",
+              _0: sampleRecord
+            });
+      }));
+
+Zora.test("generic record with multiple type parameters", (function (t) {
+        var sampleJson = Js_dict.fromArray([
+              [
+                "key",
+                "myKey"
+              ],
+              [
+                "value",
+                42.0
+              ]
+            ]);
+        var sampleRecord = {
+          key: "myKey",
+          value: 42
+        };
+        var encoded = Records.t6_string_int_encode(sampleRecord);
+        testEqual(t, "encode", encoded, sampleJson);
+        var decoded = Records.t6_string_int_decode(sampleJson);
+        testEqual(t, "decode", decoded, {
+              TAG: "Ok",
+              _0: sampleRecord
             });
       }));
 

@@ -261,16 +261,16 @@ function deeplyNested_decode(v) {
 function withDefault_encode(v) {
   return Js_dict.fromArray(Spice.filterOptional([
                   [
-                    "a",
+                    "opt",
                     false,
                     (function (extra) {
                           return Spice.optionToJson(Spice.intToJson, extra);
-                        })(v.a)
+                        })(v.opt)
                   ],
                   [
-                    "b",
+                    "num",
                     false,
-                    Spice.intToJson(v.b)
+                    Spice.intToJson(v.num)
                   ]
                 ]));
 }
@@ -282,45 +282,266 @@ function withDefault_decode(v) {
   if (!(typeof v === "object" && !Array.isArray(v))) {
     return Spice.error(undefined, "Not an object", v);
   }
-  var a = Belt_Option.getWithDefault(Belt_Option.map(Js_dict.get(v, "a"), (function (extra) {
+  var opt = Belt_Option.getWithDefault(Belt_Option.map(Js_dict.get(v, "opt"), (function (extra) {
               return Spice.optionFromJson(Spice.intFromJson, extra);
             })), {
         TAG: "Ok",
         _0: 1
       });
-  if (a.TAG === "Ok") {
-    var b = Belt_Option.getWithDefault(Belt_Option.map(Js_dict.get(v, "b"), Spice.intFromJson), {
+  if (opt.TAG === "Ok") {
+    var num = Belt_Option.getWithDefault(Belt_Option.map(Js_dict.get(v, "num"), Spice.intFromJson), {
           TAG: "Ok",
           _0: 0
         });
-    if (b.TAG === "Ok") {
+    if (num.TAG === "Ok") {
       return {
               TAG: "Ok",
               _0: {
-                a: a._0,
-                b: b._0
+                opt: opt._0,
+                num: num._0
               }
             };
     }
-    var e = b._0;
+    var e = num._0;
     return {
             TAG: "Error",
             _0: {
-              path: ".b" + e.path,
+              path: ".num" + e.path,
               message: e.message,
               value: e.value
             }
           };
   }
-  var e$1 = a._0;
+  var e$1 = opt._0;
   return {
           TAG: "Error",
           _0: {
-            path: ".a" + e$1.path,
+            path: ".opt" + e$1.path,
             message: e$1.message,
             value: e$1.value
           }
         };
+}
+
+function t5_encode(encoder_data) {
+  return function (v) {
+    return Js_dict.fromArray(Spice.filterOptional([[
+                      "a",
+                      false,
+                      (function (extra) {
+                            return Spice.arrayToJson(encoder_data, extra);
+                          })(v.a)
+                    ]]));
+  };
+}
+
+function t5_decode(decoder_data) {
+  return function (v) {
+    if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+      return Spice.error(undefined, "Not an object", v);
+    }
+    if (!(typeof v === "object" && !Array.isArray(v))) {
+      return Spice.error(undefined, "Not an object", v);
+    }
+    var a = (function (extra) {
+          return Spice.arrayFromJson(decoder_data, extra);
+        })(Belt_Option.getWithDefault(Js_dict.get(v, "a"), null));
+    if (a.TAG === "Ok") {
+      return {
+              TAG: "Ok",
+              _0: {
+                a: a._0
+              }
+            };
+    }
+    var e = a._0;
+    return {
+            TAG: "Error",
+            _0: {
+              path: ".a" + e.path,
+              message: e.message,
+              value: e.value
+            }
+          };
+  };
+}
+
+var t5_string_encode = t5_encode(Spice.stringToJson);
+
+var t5_string_decode = t5_decode(Spice.stringFromJson);
+
+function t6_encode(encoder_key, encoder_value) {
+  return function (v) {
+    return Js_dict.fromArray(Spice.filterOptional([
+                    [
+                      "key",
+                      false,
+                      encoder_key(v.key)
+                    ],
+                    [
+                      "value",
+                      false,
+                      encoder_value(v.value)
+                    ]
+                  ]));
+  };
+}
+
+function t6_decode(decoder_key, decoder_value) {
+  return function (v) {
+    if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+      return Spice.error(undefined, "Not an object", v);
+    }
+    if (!(typeof v === "object" && !Array.isArray(v))) {
+      return Spice.error(undefined, "Not an object", v);
+    }
+    var key = decoder_key(Belt_Option.getWithDefault(Js_dict.get(v, "key"), null));
+    if (key.TAG === "Ok") {
+      var value = decoder_value(Belt_Option.getWithDefault(Js_dict.get(v, "value"), null));
+      if (value.TAG === "Ok") {
+        return {
+                TAG: "Ok",
+                _0: {
+                  key: key._0,
+                  value: value._0
+                }
+              };
+      }
+      var e = value._0;
+      return {
+              TAG: "Error",
+              _0: {
+                path: ".value" + e.path,
+                message: e.message,
+                value: e.value
+              }
+            };
+    }
+    var e$1 = key._0;
+    return {
+            TAG: "Error",
+            _0: {
+              path: ".key" + e$1.path,
+              message: e$1.message,
+              value: e$1.value
+            }
+          };
+  };
+}
+
+var t6_string_int_encode = t6_encode(Spice.stringToJson, Spice.intToJson);
+
+var t6_string_int_decode = t6_decode(Spice.stringFromJson, Spice.intFromJson);
+
+function t7_encode(encoder_a) {
+  return function (v) {
+    return Js_dict.fromArray(Spice.filterOptional([
+                    [
+                      "l",
+                      false,
+                      (function (extra) {
+                            return Spice.listToJson(encoder_a, extra);
+                          })(v.l)
+                    ],
+                    [
+                      "o",
+                      false,
+                      (function (extra) {
+                            return Spice.optionToJson(encoder_a, extra);
+                          })(v.o)
+                    ],
+                    [
+                      "d",
+                      false,
+                      (function (extra) {
+                            return Spice.dictToJson(encoder_a, extra);
+                          })(v.d)
+                    ],
+                    [
+                      "r",
+                      false,
+                      (function (extra) {
+                            return Spice.resultToJson(encoder_a, Spice.stringToJson, extra);
+                          })(v.r)
+                    ]
+                  ]));
+  };
+}
+
+function t7_decode(decoder_a) {
+  return function (v) {
+    if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+      return Spice.error(undefined, "Not an object", v);
+    }
+    if (!(typeof v === "object" && !Array.isArray(v))) {
+      return Spice.error(undefined, "Not an object", v);
+    }
+    var l = (function (extra) {
+          return Spice.listFromJson(decoder_a, extra);
+        })(Belt_Option.getWithDefault(Js_dict.get(v, "l"), null));
+    if (l.TAG === "Ok") {
+      var o = (function (extra) {
+            return Spice.optionFromJson(decoder_a, extra);
+          })(Belt_Option.getWithDefault(Js_dict.get(v, "o"), null));
+      if (o.TAG === "Ok") {
+        var d = (function (extra) {
+              return Spice.dictFromJson(decoder_a, extra);
+            })(Belt_Option.getWithDefault(Js_dict.get(v, "d"), null));
+        if (d.TAG === "Ok") {
+          var r = (function (extra) {
+                return Spice.resultFromJson(decoder_a, Spice.stringFromJson, extra);
+              })(Belt_Option.getWithDefault(Js_dict.get(v, "r"), null));
+          if (r.TAG === "Ok") {
+            return {
+                    TAG: "Ok",
+                    _0: {
+                      l: l._0,
+                      o: o._0,
+                      d: d._0,
+                      r: r._0
+                    }
+                  };
+          }
+          var e = r._0;
+          return {
+                  TAG: "Error",
+                  _0: {
+                    path: ".r" + e.path,
+                    message: e.message,
+                    value: e.value
+                  }
+                };
+        }
+        var e$1 = d._0;
+        return {
+                TAG: "Error",
+                _0: {
+                  path: ".d" + e$1.path,
+                  message: e$1.message,
+                  value: e$1.value
+                }
+              };
+      }
+      var e$2 = o._0;
+      return {
+              TAG: "Error",
+              _0: {
+                path: ".o" + e$2.path,
+                message: e$2.message,
+                value: e$2.value
+              }
+            };
+    }
+    var e$3 = l._0;
+    return {
+            TAG: "Error",
+            _0: {
+              path: ".l" + e$3.path,
+              message: e$3.message,
+              value: e$3.value
+            }
+          };
+  };
 }
 
 export {
@@ -335,5 +556,15 @@ export {
   deeplyNested_decode ,
   withDefault_encode ,
   withDefault_decode ,
+  t5_encode ,
+  t5_decode ,
+  t5_string_encode ,
+  t5_string_decode ,
+  t6_encode ,
+  t6_decode ,
+  t6_string_int_encode ,
+  t6_string_int_decode ,
+  t7_encode ,
+  t7_decode ,
 }
-/* No side effect */
+/* t5_string_encode Not a pure module */

@@ -131,11 +131,49 @@ zoraBlock("deeply nested record error path", t => {
 
 zoraBlock("record with @spice.default", t => {
   let decoded = Js.Json.object_(Js.Dict.empty())->Records.withDefault_decode
-  t->testEqual(`missing fields use defaults`, decoded, Ok({Records.a: Some(1), b: 0}))
+  t->testEqual(`missing fields use defaults`, decoded, Ok({Records.opt: Some(1), num: 0}))
 
   let decoded =
     Js.Json.object_(
-      Js.Dict.fromArray([("a", Js.Json.number(2.)), ("b", Js.Json.number(3.))]),
+      Js.Dict.fromArray([("opt", Js.Json.number(2.)), ("num", Js.Json.number(3.))]),
     )->Records.withDefault_decode
-  t->testEqual(`present fields override defaults`, decoded, Ok({Records.a: Some(2), b: 3}))
+  t->testEqual(`present fields override defaults`, decoded, Ok({Records.opt: Some(2), num: 3}))
+})
+
+zoraBlock("generic record with single type parameter", t => {
+  let sampleJson = Js.Json.object_(
+    Js.Dict.fromArray([
+      (
+        "a",
+        Js.Json.array([Js.Json.string("one"), Js.Json.string("two"), Js.Json.string("three")]),
+      ),
+    ]),
+  )
+
+  let sampleRecord: Records.t5<string> = {
+    a: ["one", "two", "three"],
+  }
+
+  let encoded = sampleRecord->Records.t5_string_encode
+  t->testEqual(`encode`, encoded, sampleJson)
+
+  let decoded = sampleJson->Records.t5_string_decode
+  t->testEqual(`decode`, decoded, Ok(sampleRecord))
+})
+
+zoraBlock("generic record with multiple type parameters", t => {
+  let sampleJson = Js.Json.object_(
+    Js.Dict.fromArray([("key", Js.Json.string("myKey")), ("value", Js.Json.number(42.0))]),
+  )
+
+  let sampleRecord: Records.t6<string, int> = {
+    key: "myKey",
+    value: 42,
+  }
+
+  let encoded = sampleRecord->Records.t6_string_int_encode
+  t->testEqual(`encode`, encoded, sampleJson)
+
+  let decoded = sampleJson->Records.t6_string_int_decode
+  t->testEqual(`decode`, decoded, Ok(sampleRecord))
 })

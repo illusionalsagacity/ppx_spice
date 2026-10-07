@@ -3,6 +3,7 @@
 import * as Spice from "./Spice.mjs";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Belt_Result from "rescript/lib/es6/belt_Result.js";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 
 function t_encode(v) {
   if (v === "One") {
@@ -191,6 +192,206 @@ function withArgs_decode(v) {
   return Spice.error(undefined, "Invalid variant constructor", Belt_Array.getExn(v, 0));
 }
 
+function t5_encode(encoder_a) {
+  return function (v) {
+    if (v !== undefined) {
+      return [
+              "Some",
+              encoder_a(Caml_option.valFromOption(v))
+            ];
+    } else {
+      return ["None"];
+    }
+  };
+}
+
+function t5_decode(decoder_a) {
+  return function (v) {
+    if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+      return Spice.error(undefined, "Not a variant", v);
+    }
+    if (!Array.isArray(v)) {
+      return Spice.error(undefined, "Not a variant", v);
+    }
+    if (v.length === 0) {
+      return Spice.error(undefined, "Expected variant, found empty array", v);
+    }
+    var match = Belt_Array.getExn(v, 0);
+    if (!(!Array.isArray(match) && (match === null || typeof match !== "object") && typeof match !== "number" && typeof match !== "string" && typeof match !== "boolean") && typeof match === "string") {
+      switch (match) {
+        case "None" :
+            if (v.length !== 1) {
+              return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+            } else {
+              return {
+                      TAG: "Ok",
+                      _0: undefined
+                    };
+            }
+        case "Some" :
+            if (v.length !== 2) {
+              return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+            }
+            var v0 = decoder_a(Belt_Array.getExn(v, 1));
+            if (v0.TAG === "Ok") {
+              return {
+                      TAG: "Ok",
+                      _0: Caml_option.some(v0._0)
+                    };
+            }
+            var e = v0._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e.path,
+                      message: e.message,
+                      value: e.value
+                    }
+                  };
+        default:
+          
+      }
+    }
+    return Spice.error(undefined, "Invalid variant constructor", Belt_Array.getExn(v, 0));
+  };
+}
+
+var t5_string_encode = t5_encode(Spice.stringToJson);
+
+var t5_string_decode = t5_decode(Spice.stringFromJson);
+
+function t6_encode(encoder_a, encoder_b) {
+  return function (v) {
+    switch (v.TAG) {
+      case "Left" :
+          return [
+                  "Left",
+                  encoder_a(v._0)
+                ];
+      case "Right" :
+          return [
+                  "Right",
+                  encoder_b(v._0)
+                ];
+      case "Both" :
+          return [
+                  "Both",
+                  encoder_a(v._0),
+                  encoder_b(v._1)
+                ];
+      
+    }
+  };
+}
+
+function t6_decode(decoder_a, decoder_b) {
+  return function (v) {
+    if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string" && typeof v !== "boolean") {
+      return Spice.error(undefined, "Not a variant", v);
+    }
+    if (!Array.isArray(v)) {
+      return Spice.error(undefined, "Not a variant", v);
+    }
+    if (v.length === 0) {
+      return Spice.error(undefined, "Expected variant, found empty array", v);
+    }
+    var match = Belt_Array.getExn(v, 0);
+    if (!(!Array.isArray(match) && (match === null || typeof match !== "object") && typeof match !== "number" && typeof match !== "string" && typeof match !== "boolean") && typeof match === "string") {
+      switch (match) {
+        case "Both" :
+            if (v.length !== 3) {
+              return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+            }
+            var match$1 = decoder_a(Belt_Array.getExn(v, 1));
+            var match$2 = decoder_b(Belt_Array.getExn(v, 2));
+            if (match$1.TAG === "Ok") {
+              if (match$2.TAG === "Ok") {
+                return {
+                        TAG: "Ok",
+                        _0: {
+                          TAG: "Both",
+                          _0: match$1._0,
+                          _1: match$2._0
+                        }
+                      };
+              }
+              var e = match$2._0;
+              return {
+                      TAG: "Error",
+                      _0: {
+                        path: "[2]" + e.path,
+                        message: e.message,
+                        value: e.value
+                      }
+                    };
+            }
+            var e$1 = match$1._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e$1.path,
+                      message: e$1.message,
+                      value: e$1.value
+                    }
+                  };
+        case "Left" :
+            if (v.length !== 2) {
+              return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+            }
+            var v0 = decoder_a(Belt_Array.getExn(v, 1));
+            if (v0.TAG === "Ok") {
+              return {
+                      TAG: "Ok",
+                      _0: {
+                        TAG: "Left",
+                        _0: v0._0
+                      }
+                    };
+            }
+            var e$2 = v0._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e$2.path,
+                      message: e$2.message,
+                      value: e$2.value
+                    }
+                  };
+        case "Right" :
+            if (v.length !== 2) {
+              return Spice.error(undefined, "Invalid number of arguments to variant constructor", v);
+            }
+            var v0$1 = decoder_b(Belt_Array.getExn(v, 1));
+            if (v0$1.TAG === "Ok") {
+              return {
+                      TAG: "Ok",
+                      _0: {
+                        TAG: "Right",
+                        _0: v0$1._0
+                      }
+                    };
+            }
+            var e$3 = v0$1._0;
+            return {
+                    TAG: "Error",
+                    _0: {
+                      path: "[1]" + e$3.path,
+                      message: e$3.message,
+                      value: e$3.value
+                    }
+                  };
+        default:
+          
+      }
+    }
+    return Spice.error(undefined, "Invalid variant constructor", Belt_Array.getExn(v, 0));
+  };
+}
+
+var t6_string_int_encode = t6_encode(Spice.stringToJson, Spice.intToJson);
+
+var t6_string_int_decode = t6_decode(Spice.stringFromJson, Spice.intFromJson);
+
 export {
   t_encode ,
   t_decode ,
@@ -203,5 +404,13 @@ export {
   t4_encode ,
   t4_decode ,
   withArgs_decode ,
+  t5_encode ,
+  t5_decode ,
+  t5_string_encode ,
+  t5_string_decode ,
+  t6_encode ,
+  t6_decode ,
+  t6_string_int_encode ,
+  t6_string_int_decode ,
 }
-/* No side effect */
+/* t5_string_encode Not a pure module */

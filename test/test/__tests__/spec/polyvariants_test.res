@@ -64,3 +64,61 @@ zoraBlock("polyvariant error path includes correct index", t => {
     }
   })
 })
+
+zoraBlock("generic polyvariant with single type parameter", t => {
+  let someEncoded = #Some("hello")->Polyvariants.t3_string_encode
+  t->testEqual(
+    `encode #Some("hello")`,
+    someEncoded,
+    Js.Json.array([Js.Json.string("Some"), Js.Json.string("hello")]),
+  )
+
+  let noneEncoded = #None->Polyvariants.t3_string_encode
+  t->testEqual(`encode #None`, noneEncoded, Js.Json.array([Js.Json.string("None")]))
+
+  let someDecoded =
+    Js.Json.array([Js.Json.string("Some"), Js.Json.string("hello")])->Polyvariants.t3_string_decode
+  t->testEqual(`decode #Some`, someDecoded, Ok(#Some("hello")))
+
+  let noneDecoded = Js.Json.array([Js.Json.string("None")])->Polyvariants.t3_string_decode
+  t->testEqual(`decode #None`, noneDecoded, Ok(#None))
+})
+
+zoraBlock("generic polyvariant with multiple type parameters", t => {
+  let leftEncoded = #Left("hello")->Polyvariants.t4_string_int_encode
+  t->testEqual(
+    `encode #Left("hello")`,
+    leftEncoded,
+    Js.Json.array([Js.Json.string("Left"), Js.Json.string("hello")]),
+  )
+
+  let rightEncoded = #Right(42)->Polyvariants.t4_string_int_encode
+  t->testEqual(
+    `encode #Right(42)`,
+    rightEncoded,
+    Js.Json.array([Js.Json.string("Right"), Js.Json.number(42.0)]),
+  )
+
+  let bothEncoded = #Both("hello", 42)->Polyvariants.t4_string_int_encode
+  t->testEqual(
+    `encode #Both("hello", 42)`,
+    bothEncoded,
+    Js.Json.array([Js.Json.string("Both"), Js.Json.string("hello"), Js.Json.number(42.0)]),
+  )
+
+  let leftDecoded =
+    Js.Json.array([Js.Json.string("Left"), Js.Json.string("hello")])->Polyvariants.t4_string_int_decode
+  t->testEqual(`decode #Left`, leftDecoded, Ok(#Left("hello")))
+
+  let rightDecoded =
+    Js.Json.array([Js.Json.string("Right"), Js.Json.number(42.0)])->Polyvariants.t4_string_int_decode
+  t->testEqual(`decode #Right`, rightDecoded, Ok(#Right(42)))
+
+  let bothDecoded =
+    Js.Json.array([
+      Js.Json.string("Both"),
+      Js.Json.string("hello"),
+      Js.Json.number(42.0),
+    ])->Polyvariants.t4_string_int_decode
+  t->testEqual(`decode #Both`, bothDecoded, Ok(#Both("hello", 42)))
+})

@@ -73,7 +73,9 @@ let boolFromJson = j =>
 let unitToJson = (): Js.Json.t => Js.Json.Number(0.0)
 let unitFromJson = _ => Ok()
 
-let arrayToJson = (encoder, arr): Js.Json.t => Js.Json.Array(Js.Array.map(encoder, arr))
+// Apply `encoder` inside a lambda instead of passing it to the (curried) Js.Array.map
+// directly, so its inferred type stays uncurried and matches generated .resi signatures.
+let arrayToJson = (encoder, arr): Js.Json.t => Js.Json.Array(Js.Array.map(x => encoder(x), arr))
 
 let arrayFromJson = (decoder, json) =>
   switch (json: Js.Json.t) {

@@ -169,7 +169,9 @@ function unitFromJson(param) {
 }
 
 function arrayToJson(encoder, arr) {
-  return Js_array.map(encoder, arr);
+  return Js_array.map((function (x) {
+                return encoder(x);
+              }), arr);
 }
 
 function arrayFromJson(decoder, json) {
@@ -213,8 +215,7 @@ function arrayFromJson(decoder, json) {
 }
 
 function listToJson(encoder, list) {
-  var arr = Belt_List.toArray(list);
-  return Js_array.map(encoder, arr);
+  return arrayToJson(encoder, Belt_List.toArray(list));
 }
 
 function listFromJson(decoder, json) {

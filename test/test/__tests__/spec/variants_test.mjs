@@ -96,6 +96,93 @@ Zora.test("variant error path includes correct index", (function (t) {
               }));
       }));
 
+Zora.test("generic variant with single type parameter", (function (t) {
+        var someEncoded = Variants.t5_string_encode("hello");
+        testEqual(t, "encode Some(\"hello\")", someEncoded, [
+              "Some",
+              "hello"
+            ]);
+        var noneEncoded = Variants.t5_string_encode(undefined);
+        testEqual(t, "encode None", noneEncoded, ["None"]);
+        var someDecoded = Variants.t5_string_decode([
+              "Some",
+              "hello"
+            ]);
+        testEqual(t, "decode Some", someDecoded, {
+              TAG: "Ok",
+              _0: "hello"
+            });
+        var noneDecoded = Variants.t5_string_decode(["None"]);
+        testEqual(t, "decode None", noneDecoded, {
+              TAG: "Ok",
+              _0: undefined
+            });
+      }));
+
+Zora.test("generic variant with multiple type parameters", (function (t) {
+        var leftEncoded = Variants.t6_string_int_encode({
+              TAG: "Left",
+              _0: "hello"
+            });
+        testEqual(t, "encode Left(\"hello\")", leftEncoded, [
+              "Left",
+              "hello"
+            ]);
+        var rightEncoded = Variants.t6_string_int_encode({
+              TAG: "Right",
+              _0: 42
+            });
+        testEqual(t, "encode Right(42)", rightEncoded, [
+              "Right",
+              42.0
+            ]);
+        var bothEncoded = Variants.t6_string_int_encode({
+              TAG: "Both",
+              _0: "hello",
+              _1: 42
+            });
+        testEqual(t, "encode Both(\"hello\", 42)", bothEncoded, [
+              "Both",
+              "hello",
+              42.0
+            ]);
+        var leftDecoded = Variants.t6_string_int_decode([
+              "Left",
+              "hello"
+            ]);
+        testEqual(t, "decode Left", leftDecoded, {
+              TAG: "Ok",
+              _0: {
+                TAG: "Left",
+                _0: "hello"
+              }
+            });
+        var rightDecoded = Variants.t6_string_int_decode([
+              "Right",
+              42.0
+            ]);
+        testEqual(t, "decode Right", rightDecoded, {
+              TAG: "Ok",
+              _0: {
+                TAG: "Right",
+                _0: 42
+              }
+            });
+        var bothDecoded = Variants.t6_string_int_decode([
+              "Both",
+              "hello",
+              42.0
+            ]);
+        testEqual(t, "decode Both", bothDecoded, {
+              TAG: "Ok",
+              _0: {
+                TAG: "Both",
+                _0: "hello",
+                _1: 42
+              }
+            });
+      }));
+
 export {
   testEqual ,
 }

@@ -188,10 +188,12 @@ function arrayFromJson(decoder, json) {
                   if (acc.TAG !== "Ok") {
                     return acc;
                   }
+                  var prev = acc._0;
                   if (match.TAG === "Ok") {
+                    prev.push(match._0);
                     return {
                             TAG: "Ok",
-                            _0: Js_array.concat([match._0], acc._0)
+                            _0: prev
                           };
                   }
                   var error = match._0;

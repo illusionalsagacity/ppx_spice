@@ -84,8 +84,12 @@ let arrayFromJson = (decoder, json) =>
       | (_, Error({path} as error)) =>
         Error({...error, path: "[" ++ (string_of_int(i) ++ ("]" ++ path))})
 
-      | (Ok(prev), Ok(newVal)) =>
-        Ok(Js.Array.concat([newVal], prev))
+      // `prev` is the accumulator created below, so appending in place is safe
+      // and avoids copying it for every element.
+      | (Ok(prev), Ok(newVal)) => {
+          Js.Array2.push(prev, newVal)->ignore
+          Ok(prev)
+        }
       }
     , Ok([]), arr)
 
